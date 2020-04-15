@@ -1,11 +1,11 @@
 package com.pracownia.vanet.view;
 
 import com.pracownia.vanet.Main;
-import com.pracownia.vanet.model.Route;
-import com.pracownia.vanet.model.Vehicle;
+import com.pracownia.vanet.model.road.Road;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.model.event.EventSource;
-import com.pracownia.vanet.model.point.NetworkPoint;
-import com.pracownia.vanet.model.point.StationaryNetworkPoint;
+import com.pracownia.vanet.model.devices.Device;
+import com.pracownia.vanet.model.devices.RoadSide;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -53,7 +53,7 @@ public class ShapesCreator {
         return circle;
     }
 
-    private Circle circleCreator(StationaryNetworkPoint stationaryNetworkPoint) {
+    private Circle circleCreator(RoadSide stationaryNetworkPoint) {
         Circle circle = new Circle();
         circle.setCenterX(stationaryNetworkPoint.getCurrentLocation().getX());
         circle.setCenterY(stationaryNetworkPoint.getCurrentLocation().getY());
@@ -82,28 +82,28 @@ public class ShapesCreator {
         return circle;
     }
 
-    private Line lineCrator(Route route) {
+    private Line lineCrator(Road road) {
         Line line = new Line();
-        line.setStartX(route.getStartPoint().getX());
-        line.setStartY(route.getStartPoint().getY());
-        line.setEndX(route.getEndPoint().getX());
-        line.setEndY(route.getEndPoint().getY());
+        line.setStartX(road.getStartPoint().getX());
+        line.setStartY(road.getStartPoint().getY());
+        line.setEndX(road.getEndPoint().getX());
+        line.setEndY(road.getEndPoint().getY());
 
         return line;
     }
 
-    private Label labelCreator(NetworkPoint networkPoint) {
+    private Label labelCreator(Device device) {
         Label label = new Label();
-        label.setText(String.valueOf(networkPoint.getCollectedEvents().size()));
-        label.setLayoutX(networkPoint.getCurrentLocation().getX());
-        label.setLayoutY(networkPoint.getCurrentLocation().getY());
+        label.setText(String.valueOf(device.getCollectedEvents().size()));
+        label.setLayoutX(device.getCurrentLocation().getX());
+        label.setLayoutY(device.getCurrentLocation().getY());
 
         return label;
     }
 
     public void setRoutesLines(Simulation simulation) {
-        for (int i = 0; i < simulation.getMap().getRoutes().size(); i++) {
-            Line line = lineCrator(simulation.getMap().getRoutes().get(i));
+        for (int i = 0; i < simulation.getMap().getRoads().size(); i++) {
+            Line line = lineCrator(simulation.getMap().getRoads().get(i));
             root.getChildren().add(line);
         }
     }
@@ -140,16 +140,16 @@ public class ShapesCreator {
     }
 
     public void setStationaryPointCircles(Simulation simulation) {
-        for (int i = 0; i < simulation.getMap().getStationaryNetworkPoints().size(); i++) {
-            Circle circle = circleCreator(simulation.getMap().getStationaryNetworkPoints().get(i));
+        for (int i = 0; i < simulation.getMap().getRoadSides().size(); i++) {
+            Circle circle = circleCreator(simulation.getMap().getRoadSides().get(i));
             simulation.getStationaryCirclelist().add(circle);
             root.getChildren().add(circle);
         }
     }
 
     public void setLabels(Simulation simulation, int amount) {
-        for (int i = 0; i < simulation.getMap().getStationaryNetworkPoints().size(); i++) {
-            Label label = labelCreator(simulation.getMap().getStationaryNetworkPoints().get(i));
+        for (int i = 0; i < simulation.getMap().getRoadSides().size(); i++) {
+            Label label = labelCreator(simulation.getMap().getRoadSides().get(i));
             root.getChildren().add(label);
         }
 

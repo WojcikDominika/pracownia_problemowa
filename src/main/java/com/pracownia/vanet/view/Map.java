@@ -1,12 +1,12 @@
 package com.pracownia.vanet.view;
 
-import com.pracownia.vanet.model.Crossing;
-import com.pracownia.vanet.model.Route;
-import com.pracownia.vanet.model.Vehicle;
+import com.pracownia.vanet.model.road.CrossRoad;
+import com.pracownia.vanet.model.road.Road;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.model.event.EventSource;
 import com.pracownia.vanet.model.event.EventType;
-import com.pracownia.vanet.model.point.Point;
-import com.pracownia.vanet.model.point.StationaryNetworkPoint;
+import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.devices.RoadSide;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
@@ -28,17 +28,17 @@ public class Map {
     private static int fakeCarId = -666;
     private static int fakeEventId = -1;
 
-    private List<Route> routes;
+    private List<Road> roads;
     private ObservableList<Vehicle> vehicles;
-    private List<Crossing> crossings;
+    private List<CrossRoad> crossRoads;
     private List<EventSource> eventSources;
-    private List<StationaryNetworkPoint> stationaryNetworkPoints;
+    private List<RoadSide> roadSides;
     private ObservableList<Vehicle> hackers;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Map() {
 
-        routes = new ArrayList<>();
+        roads = new ArrayList<>();
         vehicles = FXCollections.observableArrayList();
 
         //		vehicles.addListener((ListChangeListener.Change<? extends Vehicle> change) -> {
@@ -58,38 +58,38 @@ public class Map {
         //		});
 
         hackers = FXCollections.observableArrayList();
-        crossings = new ArrayList<>();
+        crossRoads = new ArrayList<>();
         eventSources = new ArrayList<>();
-        stationaryNetworkPoints = new ArrayList<>();
+        roadSides = new ArrayList<>();
         initMap();
 
     }
 
     private void initMap() {
-        routes.add(new Route(200.0, 100.0, 200.0, 700.0));
-        routes.add(new Route(400.0, 100.0, 400.0, 700.0));
-        routes.add(new Route(600.0, 100.0, 600.0, 700.0));
-        routes.add(new Route(800.0, 100.0, 800.0, 700.0));
-        routes.add(new Route(100.0, 200.0, 900.0, 200.0));
-        routes.add(new Route(100.0, 400.0, 900.0, 400.0));
-        routes.add(new Route(100.0, 600.0, 900.0, 600.0));
+        roads.add(new Road(200.0, 100.0, 200.0, 700.0));
+        roads.add(new Road(400.0, 100.0, 400.0, 700.0));
+        roads.add(new Road(600.0, 100.0, 600.0, 700.0));
+        roads.add(new Road(800.0, 100.0, 800.0, 700.0));
+        roads.add(new Road(100.0, 200.0, 900.0, 200.0));
+        roads.add(new Road(100.0, 400.0, 900.0, 400.0));
+        roads.add(new Road(100.0, 600.0, 900.0, 600.0));
 
-        crossings.add(new Crossing(new Point(200.0, 200.0), routes.get(0), routes.get(4)));
-        crossings.add(new Crossing(new Point(200.0, 400.0), routes.get(0), routes.get(5)));
-        crossings.add(new Crossing(new Point(200.0, 600.0), routes.get(0), routes.get(6)));
-        crossings.add(new Crossing(new Point(400.0, 200.0), routes.get(1), routes.get(4)));
-        crossings.add(new Crossing(new Point(400.0, 400.0), routes.get(1), routes.get(5)));
-        crossings.add(new Crossing(new Point(400.0, 600.0), routes.get(1), routes.get(6)));
-        crossings.add(new Crossing(new Point(600.0, 200.0), routes.get(2), routes.get(4)));
-        crossings.add(new Crossing(new Point(600.0, 400.0), routes.get(2), routes.get(5)));
-        crossings.add(new Crossing(new Point(600.0, 600.0), routes.get(2), routes.get(6)));
-        crossings.add(new Crossing(new Point(800.0, 200.0), routes.get(3), routes.get(4)));
-        crossings.add(new Crossing(new Point(800.0, 400.0), routes.get(3), routes.get(5)));
-        crossings.add(new Crossing(new Point(800.0, 600.0), routes.get(3), routes.get(6)));
+        crossRoads.add(new CrossRoad(new Point(200.0, 200.0), roads.get(0), roads.get(4)));
+        crossRoads.add(new CrossRoad(new Point(200.0, 400.0), roads.get(0), roads.get(5)));
+        crossRoads.add(new CrossRoad(new Point(200.0, 600.0), roads.get(0), roads.get(6)));
+        crossRoads.add(new CrossRoad(new Point(400.0, 200.0), roads.get(1), roads.get(4)));
+        crossRoads.add(new CrossRoad(new Point(400.0, 400.0), roads.get(1), roads.get(5)));
+        crossRoads.add(new CrossRoad(new Point(400.0, 600.0), roads.get(1), roads.get(6)));
+        crossRoads.add(new CrossRoad(new Point(600.0, 200.0), roads.get(2), roads.get(4)));
+        crossRoads.add(new CrossRoad(new Point(600.0, 400.0), roads.get(2), roads.get(5)));
+        crossRoads.add(new CrossRoad(new Point(600.0, 600.0), roads.get(2), roads.get(6)));
+        crossRoads.add(new CrossRoad(new Point(800.0, 200.0), roads.get(3), roads.get(4)));
+        crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
+        crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        stationaryNetworkPoints.add(new StationaryNetworkPoint(0, new Point(480.0, 210.0), 30.0));
-        stationaryNetworkPoints.add(new StationaryNetworkPoint(1, new Point(260.0, 610.0), 30.0));
-        stationaryNetworkPoints.add(new StationaryNetworkPoint(2, new Point(480.0, 610.0), 30.0));
+        roadSides.add(new RoadSide(0, new Point(480.0, 210.0), 30.0));
+        roadSides.add(new RoadSide(1, new Point(260.0, 610.0), 30.0));
+        roadSides.add(new RoadSide(2, new Point(480.0, 610.0), 30.0));
 
         eventSources.add(new EventSource(0, "Car Accident", "Serious Car Accident",
                 new Point(250.0, 210.0), new Date(), 20.0, EventType.CAR_ACCIDENT));
@@ -119,13 +119,13 @@ public class Map {
         Random random = new Random();
 
         for (int i = 0; i < amount; i++) {
-            vehicles.add(new Vehicle(routes.get(i % 5), i, 40.0, random.nextDouble() / 2.0 + 2));
+            vehicles.add(new Vehicle(roads.get(i % 5), i, 40.0, random.nextDouble() / 2.0 + 2));
         }
     }
 
     public Vehicle addCopy() {
         int r = new Random().nextInt(vehicles.size());
-        Vehicle me = new Vehicle(vehicles.get(r).getRoute(), vehicles.get(r)
+        Vehicle me = new Vehicle(vehicles.get(r).getRoad(), vehicles.get(r)
                 .getId(), vehicles.get(r).getRange(), vehicles.get(r).getSpeed());
         vehicles.add(me);
 
@@ -136,7 +136,7 @@ public class Map {
         Random random = new Random();
         int x = (int) (random.nextDouble() * 1000);
         int y = (int) (random.nextDouble() * 1000);
-        Vehicle vehicle = new Vehicle(routes.get(99 % 5), fakeCarId, 40.0,
+        Vehicle vehicle = new Vehicle(roads.get(99 % 5), fakeCarId, 40.0,
                 random.nextDouble() / 2.0 + 2);
         EventSource eventSource = new EventSource(fakeEventId, nameEvent, "Fake Car Accident",
                 new Point(x, y), new Date(), 20.0, EventType.CAR_ACCIDENT);

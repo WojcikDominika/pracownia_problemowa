@@ -1,6 +1,6 @@
 package com.pracownia.vanet;
 
-import com.pracownia.vanet.model.Vehicle;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.view.ShapesCreator;
 import com.pracownia.vanet.view.Simulation;
 import javafx.application.Application;

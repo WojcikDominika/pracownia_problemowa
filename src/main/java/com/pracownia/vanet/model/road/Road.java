@@ -1,6 +1,6 @@
-package com.pracownia.vanet.model;
+package com.pracownia.vanet.model.road;
 
-import com.pracownia.vanet.model.point.Point;
+import com.pracownia.vanet.model.Point;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,24 +9,24 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Getter
 @Setter
-public class Route {
+public class Road {
 
     /*------------------------ FIELDS REGION ------------------------*/
     private Point startPoint;
     private Point endPoint;
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Route() {
+    public Road() {
         startPoint = new Point();
         endPoint = new Point();
     }
 
-    public Route(Point startPoint, Point endPoint) {
+    public Road(Point startPoint, Point endPoint) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
     }
 
-    public Route(double xStartPoint, double yStartPoint, double xEndPoint, double yEndPoint) {
+    public Road(double xStartPoint, double yStartPoint, double xEndPoint, double yEndPoint) {
         this.startPoint = new Point(xStartPoint, yStartPoint);
         this.endPoint = new Point(xEndPoint, yEndPoint);
 
@@ -47,11 +47,11 @@ public class Route {
             return false;
         }
 
-        Route route = (Route) o;
+        Road road = (Road) o;
 
         return new EqualsBuilder()
-                .append(startPoint, route.startPoint)
-                .append(endPoint, route.endPoint)
+                .append(startPoint, road.startPoint)
+                .append(endPoint, road.endPoint)
                 .isEquals();
     }
 

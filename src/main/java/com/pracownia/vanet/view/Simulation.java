@@ -1,10 +1,12 @@
 package com.pracownia.vanet.view;
 
-import com.pracownia.vanet.model.Crossing;
-import com.pracownia.vanet.model.Vehicle;
+import com.pracownia.vanet.model.network.Network;
+import com.pracownia.vanet.model.network.NetworkBuilder;
+import com.pracownia.vanet.model.road.CrossRoad;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.event.EventSource;
-import com.pracownia.vanet.model.point.StationaryNetworkPoint;
+import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.util.Logger;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -46,14 +48,19 @@ public class Simulation implements Runnable {
     public void run() {
         while (true) {
             if (simulationRunning) {
-                updateVehiclesPosition();
-                checkVehicleCrossing();
-                resetReferences();
-                checkVehicleEventSource();
-                updateStationaryPoints();
-                checkCopies();
+                // Movement
+                moveDevices();
+                drawVehicles();
+                drawRoadSides();
+                turnOnCrossRoads();
 
-                //showVehiclesConnected();
+                // Build Network Connections
+                Network dynamicNetwork = new NetworkBuilder()
+                        .withVehicles(map.getVehicles())
+                        .withRoadSides(map.getRoadSides())
+                        .build();
+                simulateCommunication(dynamicNetwork);
+                drawNetworkConnections();
             }
             try {
                 Thread.sleep(50);
@@ -63,11 +70,24 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void updateVehiclesPosition() {
+    private void moveDevices() {
+        map.getVehicles().stream().forEach(Vehicle::move);
+    }
+
+    private void drawNetworkConnections() {
+        // TODO implement
+    }
+
+    private void simulateCommunication(Network dynamicNetwork) {
+        for(Vehicle vehicle: map.getVehicles()){
+            vehicle.send(dynamicNetwork);
+        }
+    }
+
+    private void drawVehicles() {
         int it = 0;
 
         for (Vehicle vehicle : map.getVehicles()) {
-            vehicle.update(map);
             try {
                 double vehicleX = vehicle.getCurrentLocation().getX();
                 double vehicleY = vehicle.getCurrentLocation().getY();
@@ -79,15 +99,10 @@ public class Simulation implements Runnable {
 
                 if (vehicle.isSafe() != true) {
                     circleList.get(it).setFill(here);
-                    //labelList.get(it).setText(String.valueOf(vehicle.getCollectedEvents().size
-                    // ()));
+
 
                     if (vehicle.getTrustLevel() < 0.3) {
                         circleList.get(it).setFill(here);
-                        //                    } else if (vehicle.getCollectedEvents().size() > 0) {
-                        //                        circleList.get(it).setFill(Color.BROWN);
-                        //                    }
-
                         labelList.get(it).setLayoutX(vehicleX + 7.0);
                         labelList.get(it).setLayoutY(vehicleY);
                     }
@@ -99,28 +114,23 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void checkVehicleCrossing() {
+    private void turnOnCrossRoads() {
         for (Vehicle vehicle : map.getVehicles()) {
-            for (Crossing crossing : map.getCrossings()) {
-
-                if (crossing.getDistanceToCrossing(vehicle) < Crossing.DETECTION_RANGE) {
-                    crossing.transportVehicle(vehicle);
-
+            for (CrossRoad crossRoad : map.getCrossRoads()) {
+                if (crossRoad.getDistanceToCrossing(vehicle) < CrossRoad.DETECTION_RANGE) {
+                    crossRoad.transportVehicle(vehicle);
                 }
             }
         }
-    }
-
-    private void resetReferences() {
-        for (Crossing crossing : map.getCrossings()) {
-            crossing.resetLastTransportedVehicle();
+        for (CrossRoad crossRoad : map.getCrossRoads()) {
+            crossRoad.resetLastTransportedVehicle();
         }
     }
 
-    private void checkVehicleEventSource() {
-        checkVehicleEventSourceEncountered();
-        checkVehicleEventSourceCollected();
-    }
+//    private void checkVehicleEventSource() {
+//        checkVehicleEventSourceEncountered();
+//        checkVehicleEventSourceCollected();
+//    }
 
     private void checkVehicleEventSourceCollected() {
         for (Vehicle vehicle : map.getVehicles()) {
@@ -161,19 +171,15 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void updateStationaryPoints() {
+    private void drawRoadSides() {
         int it = 0;
-        for (StationaryNetworkPoint s : map.getStationaryNetworkPoints()) {
-            s.update(map);
-            s.checkIfChangeVehicleTrustLevel();
+        for (RoadSide s : map.getRoadSides()) {
             try {
                 if (s.getConnectedVehicles().size() > 0) {
                     stationaryCirclelist.get(it).setFill(Color.ORANGE);
                 } else {
                     stationaryCirclelist.get(it).setFill(Color.BLUE);
                 }
-                //if (s.getCollectedEvents().size() > 0) { stationaryCirclelist.get(it).setFill
-                // (Color.CYAN); }
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
@@ -209,29 +215,26 @@ public class Simulation implements Runnable {
         }
         Vehicle vehicle = map.getVehicles().get(new Random().nextInt(map.getVehicles().size()));
 
-        vehicle.setCurrentLocation(map.getCrossings()
-                .get(new Random().nextInt(map.getCrossings().size()))
+        vehicle.setCurrentLocation(map.getCrossRoads()
+                .get(new Random().nextInt(map.getCrossRoads().size()))
                 .getLocation());
     }
 
-    public void addHacker() {
 
-    }
-
-    public void checkCopies() {
-        int size = map.getVehicles().size();
-        for (int i = 0; i < map.getVehicles().size(); i++) {
-            for (int j = i + 1; j < map.getVehicles().size(); j++) {
-                if (map.getVehicles().get(i).getId() == map.getVehicles().get(j).getId()) {
-                    map.getVehicles().get(j).setNotSafe("KLON");
-                    map.getVehicles().get(i).setNotSafe("KLON");
-                    System.out.println(map.getVehicles()
-                            .get(i)
-                            .getId() + " ... " + map.getVehicles().get(j).getId());
-                }
-            }
-        }
-    }
+//    public void checkCopies() {
+//        int size = map.getVehicles().size();
+//        for (int i = 0; i < map.getVehicles().size(); i++) {
+//            for (int j = i + 1; j < map.getVehicles().size(); j++) {
+//                if (map.getVehicles().get(i).getId() == map.getVehicles().get(j).getId()) {
+//                    map.getVehicles().get(j).setNotSafe("KLON");
+//                    map.getVehicles().get(i).setNotSafe("KLON");
+//                    System.out.println(map.getVehicles()
+//                            .get(i)
+//                            .getId() + " ... " + map.getVehicles().get(j).getId());
+//                }
+//            }
+//        }
+//    }
 
     public void deleteUnsafeCircles() {
         List which = map.deleteUnsafeVehicles();

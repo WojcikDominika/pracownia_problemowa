@@ -1,4 +1,4 @@
-package com.pracownia.vanet.model.point;
+package com.pracownia.vanet.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

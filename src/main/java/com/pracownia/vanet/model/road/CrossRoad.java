@@ -1,6 +1,7 @@
-package com.pracownia.vanet.model;
+package com.pracownia.vanet.model.road;
 
-import com.pracownia.vanet.model.point.Point;
+import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.devices.Vehicle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,21 +12,21 @@ import java.util.Random;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Crossing {
+public class CrossRoad {
 
     /*------------------------ FIELDS REGION ------------------------*/
     public static final double DETECTION_RANGE = 1.0;
 
     private Point location;
-    private Route routeA;
-    private Route routeB;
+    private Road roadA;
+    private Road roadB;
     private Vehicle lastTransportedVehicle = new Vehicle();
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Crossing(Point location, Route routeA, Route routeB) {
+    public CrossRoad(Point location, Road roadA, Road roadB) {
         this.location = location;
-        this.routeA = routeA;
-        this.routeB = routeB;
+        this.roadA = roadA;
+        this.roadB = roadB;
     }
 
     public void transportVehicle(Vehicle vehicle) {
@@ -38,10 +39,10 @@ public class Crossing {
         int pom = random.nextInt();
 
         if (Math.abs(pom % 3) == 0 || Math.abs(pom % 3) == 1) {
-            if (vehicle.getRoute() == routeA) {
-                vehicle.setRoute(routeB);
+            if (vehicle.getRoad() == roadA) {
+                vehicle.setRoad(roadB);
             } else {
-                vehicle.setRoute(routeA);
+                vehicle.setRoad(roadA);
             }
 
             vehicle.setCurrentLocation(new Point(location.getX(), location.getY()));
@@ -57,27 +58,7 @@ public class Crossing {
                     .getX()), 2) + Math.pow(location.getY() - vehicle.getPreviousCrossing()
                     .getY(), 2));
             double t = Math.abs(new Date().getTime() - vehicle.getDate().getTime());
-
-            double v = s / (t / 50);
-            //            System.out.println("Szybkosc auta: " + vehicle.getSpeed());
-            //            System.out.println("Wyliczona: " + v);
-            //            System.out.println("Czas: " + t);
-            //            System.out.println("droga: " + s);
-
-            //            System.out.println("pozycja auta: " + vehicle.getPreviousCrossing()
-            //            .getX() + " --- " +vehicle.getPreviousCrossing().getY() );
-            //            System.out.println("pozycja skrzyzowania: " + location.getX() + " --- "
-            //            + location.getY());
-
-            if (Math.abs(v - vehicle.getSpeed()) > 0.5) {
-                vehicle.setNotSafe("Identified as attacker!");
-            } else if (vehicle.getTrustLevel() < 0.3) {
-                vehicle.setNotSafe("Identified as attacker!");
-            } else {
-                //System.out.println("Bezpiecznie.");
-            }
         }
-
         vehicle.setPreviousCrossing(location);
     }
 
@@ -87,7 +68,7 @@ public class Crossing {
     }
 
     public void resetLastTransportedVehicle() {
-        if (getDistanceToCrossing(lastTransportedVehicle) > Crossing.DETECTION_RANGE) {
+        if (getDistanceToCrossing(lastTransportedVehicle) > CrossRoad.DETECTION_RANGE) {
             lastTransportedVehicle = new Vehicle();
         }
     }

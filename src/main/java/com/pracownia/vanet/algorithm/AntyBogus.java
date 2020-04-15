@@ -1,6 +1,6 @@
 package com.pracownia.vanet.algorithm;
 
-import com.pracownia.vanet.model.Vehicle;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.model.event.Event;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;

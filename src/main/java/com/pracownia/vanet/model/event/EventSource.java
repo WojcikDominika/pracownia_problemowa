@@ -1,6 +1,6 @@
 package com.pracownia.vanet.model.event;
 
-import com.pracownia.vanet.model.point.Point;
+import com.pracownia.vanet.model.Point;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +13,10 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@Deprecated
+/**
+ * Should be removed?
+ */
 public class EventSource {
 
     /*------------------------ FIELDS REGION ------------------------*/
