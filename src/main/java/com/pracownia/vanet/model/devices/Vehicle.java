@@ -4,6 +4,7 @@ import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.network.ConnectionRoute;
 import com.pracownia.vanet.model.network.Network;
+import com.pracownia.vanet.model.road.CrossRoad;
 import com.pracownia.vanet.model.road.Road;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -101,6 +102,11 @@ public class Vehicle extends Device {
     @Override
     public void receive(Event event) {
         System.out.println("Message Received: " + event.toString());
+    }
+
+    @Override
+    public void turn(CrossRoad crossRoad) {
+        crossRoad.transportVehicle(this);
     }
 
     @Override

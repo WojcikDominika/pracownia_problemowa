@@ -1,6 +1,7 @@
 package com.pracownia.vanet.model.road;
 
 import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.devices.Vehicle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,7 +63,7 @@ public class CrossRoad {
         vehicle.setPreviousCrossing(location);
     }
 
-    public double getDistanceToCrossing(Vehicle vehicle) {
+    public double getDistanceToCrossing(Device vehicle) {
         return Math.sqrt(Math.pow(location.getX() - vehicle.getCurrentLocation().getX(), 2) +
                 Math.pow(location.getY() - vehicle.getCurrentLocation().getY(), 2));
     }

@@ -3,6 +3,7 @@ package com.pracownia.vanet.model.devices;
 import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.network.Network;
+import com.pracownia.vanet.model.road.CrossRoad;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,5 +40,7 @@ public abstract class Device {
     protected double distance(Point a, Point b) {
         return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
     }
+
+    public abstract void turn(CrossRoad crossRoad);
 }
     

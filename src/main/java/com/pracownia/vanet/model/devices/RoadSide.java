@@ -3,6 +3,7 @@ package com.pracownia.vanet.model.devices;
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.network.Network;
+import com.pracownia.vanet.model.road.CrossRoad;
 
 public class RoadSide extends Device {
 
@@ -17,7 +18,7 @@ public class RoadSide extends Device {
 
     @Override
     public void move() {
-        //EMPTY
+        //Does not move
     }
 
     @Override
@@ -33,6 +34,11 @@ public class RoadSide extends Device {
     @Override
     public void receive(Event event) {
 
+    }
+
+    @Override
+    public void turn(CrossRoad crossRoad) {
+        //Does not move
     }
 }
     

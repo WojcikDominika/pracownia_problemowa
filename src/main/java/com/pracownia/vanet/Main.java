@@ -56,12 +56,12 @@ public class Main extends Application {
             }
         });
 
-        this.simulation = new Simulation();
-        this.shapesCreator = new ShapesCreator(root, this.simulation, this);
-
-        shapesCreator.setRoutesLines(simulation);
-        shapesCreator.setSourceEventCircles(simulation);
-        shapesCreator.setStationaryPointCircles(simulation);
+        this.simulation = new Simulation(root);
+//        this.shapesCreator = new ShapesCreator(root, this.simulation, this);
+//
+//        shapesCreator.setRoutesLines(simulation);
+//        shapesCreator.setSourceEventCircles(simulation);
+//        shapesCreator.setStationaryPointCircles(simulation);
 
         setInterface(simulation);
 
@@ -118,37 +118,37 @@ public class Main extends Application {
             stopTimer();
         });
 
-        Button addHackerVehicle = new Button("Add hacker vehicle");
-        addHackerVehicle.setLayoutX(1130.0);
-        addHackerVehicle.setLayoutY(200.00);
-        addHackerVehicle.setOnAction(e -> {
-            shapesCreator.setCopyCircle(simulation.getMap().addCopy());
-        });
+//        Button addHackerVehicle = new Button("Add hacker vehicle");
+//        addHackerVehicle.setLayoutX(1130.0);
+//        addHackerVehicle.setLayoutY(200.00);
+//        addHackerVehicle.setOnAction(e -> {
+//            shapesCreator.setCopyCircle(simulation.getMapRepresentation().addCopy());
+//        });
 
-        Button teleportVehicle = new Button("Teleport a vehicle");
-        teleportVehicle.setLayoutX(1130.0);
-        teleportVehicle.setLayoutY(230.0);
-        teleportVehicle.setOnAction(e -> {
-            simulation.teleportVehicle();
-        });
+//        Button teleportVehicle = new Button("Teleport a vehicle");
+//        teleportVehicle.setLayoutX(1130.0);
+//        teleportVehicle.setLayoutY(230.0);
+//        teleportVehicle.setOnAction(e -> {
+//            simulation.teleportVehicle();
+//        });
 
-        Button saveVehicleButton = new Button("Save vehicle");
-        saveVehicleButton.setLayoutX(950.0);
-        saveVehicleButton.setLayoutY(280.);
-        saveVehicleButton.setOnAction(e -> {
-            Vehicle v = simulation.getMap()
-                    .getVehicles()
-                    .get(Integer.parseInt(this.vehIdField.getText()));
-            v.setSpeed(Double.parseDouble(this.speedField.getText()));
-            v.setTrustLevel(Double.parseDouble(this.trustLevelField.getText()));
-        });
-
-        Button clearNotSafe = new Button("Clear hackers");
-        clearNotSafe.setLayoutX(1130.0);
-        clearNotSafe.setLayoutY(265.0);
-        clearNotSafe.setOnAction(e -> {
-            simulation.deleteUnsafeCircles();
-        });
+//        Button saveVehicleButton = new Button("Save vehicle");
+//        saveVehicleButton.setLayoutX(950.0);
+//        saveVehicleButton.setLayoutY(280.);
+//        saveVehicleButton.setOnAction(e -> {
+//            Vehicle v = simulation.getMapRepresentation()
+//                    .getVehicles()
+//                    .get(Integer.parseInt(this.vehIdField.getText()));
+//            v.setSpeed(Double.parseDouble(this.speedField.getText()));
+//            v.setTrustLevel(Double.parseDouble(this.trustLevelField.getText()));
+//        });
+//
+//        Button clearNotSafe = new Button("Clear hackers");
+//        clearNotSafe.setLayoutX(1130.0);
+//        clearNotSafe.setLayoutY(265.0);
+//        clearNotSafe.setOnAction(e -> {
+//            simulation.deleteUnsafeCircles();
+//        });
 
         // Vehicle informations.
         this.trustLevelField = new TextField();
@@ -199,12 +199,12 @@ public class Main extends Application {
         connVehLabel.setLayoutX(950.0);
         connVehLabel.setLayoutY(730.0);
 
-        ListView<Vehicle> hackerVehiclesList = new ListView<>();
-        hackerVehiclesList.setLayoutX(1125.0);
-        hackerVehiclesList.setLayoutY(350.0);
-        hackerVehiclesList.setMaxHeight(100);
-        hackerVehiclesList.setMaxWidth(175.0);
-        hackerVehiclesList.setItems(simulation.getMap().getVehicles());
+//        ListView<Vehicle> hackerVehiclesList = new ListView<>();
+//        hackerVehiclesList.setLayoutX(1125.0);
+//        hackerVehiclesList.setLayoutY(350.0);
+//        hackerVehiclesList.setMaxHeight(100);
+//        hackerVehiclesList.setMaxWidth(175.0);
+//        hackerVehiclesList.setItems(simulation.getMapRepresentation().getVehicles());
         //.filtered(x->!x.safe)
 
         seeThrough = new CheckBox("Widac?");
@@ -261,18 +261,15 @@ public class Main extends Application {
             }
         });
 
-        spawnFakedVeehicle.setOnAction(e -> {
-            simulation.getMap().addFakeVehicle(chooseFakeEvent.getValue().toString());
-            shapesCreator.setVehicleCircles(simulation, 1);
-            shapesCreator.setLabels(simulation, 1);
-
-        });
+//        spawnFakedVeehicle.setOnAction(e -> {
+//            simulation.getMapRepresentation().addFakeVehicle(chooseFakeEvent.getValue().toString());
+//            shapesCreator.setVehicleCircles(simulation, 1);
+//            shapesCreator.setLabels(simulation, 1);
+//
+//        });
 
         spawnVehiclesButton.setOnAction(e -> {
-            simulation.getMap().addVehicles(Integer.parseInt(vehiclesAmountField.getText()));
-            shapesCreator.setVehicleCircles(simulation,
-                    Integer.parseInt(vehiclesAmountField.getText()));
-            shapesCreator.setLabels(simulation, Integer.parseInt(vehiclesAmountField.getText()));
+            simulation.addVehicles(Integer.parseInt(vehiclesAmountField.getText()));
         });
 
         root.getChildren()
@@ -282,7 +279,7 @@ public class Main extends Application {
                         spawnVehiclesButton,
                         vehiclesAmountField,
                         stopSimulation,
-                        saveVehicleButton,
+//                        saveVehicleButton,
                         trustLevelField,
                         trustLevelLabel,
                         speedField,
@@ -300,11 +297,12 @@ public class Main extends Application {
                         rangeAmountLabel,
                         rangeAmountField,
                         changeRangeButton,
-                        teleportVehicle,
-                        addHackerVehicle,
-                        clearNotSafe,
-                        hackerVehiclesList,
+//                        teleportVehicle,
+//                        addHackerVehicle,
+//                        clearNotSafe,
+//                        hackerVehiclesList,
                         seeThrough);
+
     }
 }
     
