@@ -2,6 +2,7 @@ package com.pracownia.vanet.model.devices;
 
 import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 import lombok.Getter;
@@ -20,9 +21,6 @@ public abstract class Device {
     protected int id;
     protected Point currentLocation = new Point();
     protected double range;
-    protected List<Vehicle> connectedVehicles = new ArrayList<>();
-    protected List<Event> collectedEvents = new ArrayList<>();
-    protected List<Event> encounteredEvents = new ArrayList<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {
@@ -32,15 +30,11 @@ public abstract class Device {
     }
 
     public abstract void move();
-
     public abstract void send(Network dynamicNetwork);
     public abstract Event transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
-
-    protected double distance(Point a, Point b) {
-        return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
-    }
-
     public abstract void turn(CrossRoad crossRoad);
+
+    public abstract void registerTask(Task task);
 }
     

@@ -17,10 +17,11 @@ public class ConnectionRoute {
      */
     Device destination;
 
-    ConnectionRoute(Device from, Device to) {
-        this.route = new ArrayList<>();
+    ConnectionRoute(List<Device> route, Device to) {
+        this.route = route;
         this.destination = to;
     }
+
 
     public void send(Event event) {
         for (int i = 1; i < route.size(); i++) {

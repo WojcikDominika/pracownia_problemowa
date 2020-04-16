@@ -1,5 +1,6 @@
 package com.pracownia.vanet.model.event;
 
+import com.pracownia.vanet.model.devices.Device;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,12 +21,26 @@ public class Event {
     private Date eventDate;
     private String message;
 
+    public Device getTarget() {
+        return target;
+    }
+
+    private Device target;
+
     /*------------------------ METHODS REGION ------------------------*/
     public Event(int id, EventType eventType, Date eventDate, String message) {
         this.id = id;
         this.eventType = eventType;
         this.eventDate = eventDate;
         this.message = message;
+    }
+
+    public Event(int id, EventType eventType, Date eventDate, String message, Device target) {
+        this.id = id;
+        this.eventType = eventType;
+        this.eventDate = eventDate;
+        this.message = message;
+        this.target = target;
     }
 
     @Override

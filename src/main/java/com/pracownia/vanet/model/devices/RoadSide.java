@@ -2,6 +2,7 @@ package com.pracownia.vanet.model.devices;
 
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.event.Event;
+import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 
@@ -23,22 +24,28 @@ public class RoadSide extends Device {
 
     @Override
     public void send(Network dynamicNetwork) {
-
+        // Nothing
     }
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        return null;
+        event.setMessage(event.getMessage() + " " + id);
+        return event;
     }
 
     @Override
     public void receive(Event event) {
-
+        System.out.println("Message Received: " + event.toString() + " " + getId());
     }
 
     @Override
     public void turn(CrossRoad crossRoad) {
         //Does not move
+    }
+
+    @Override
+    public void registerTask(Task task) {
+
     }
 }
     
