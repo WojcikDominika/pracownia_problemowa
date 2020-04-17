@@ -20,6 +20,7 @@ public class Event {
     private EventType eventType;
     private Date eventDate;
     private String message;
+    private String routingPath;
 
     public Device getTarget() {
         return target;
@@ -28,19 +29,12 @@ public class Event {
     private Device target;
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Event(int id, EventType eventType, Date eventDate, String message) {
+    public Event(int id, Device target, Date eventDate, String message, String routingPath) {
         this.id = id;
-        this.eventType = eventType;
-        this.eventDate = eventDate;
-        this.message = message;
-    }
-
-    public Event(int id, EventType eventType, Date eventDate, String message, Device target) {
-        this.id = id;
-        this.eventType = eventType;
-        this.eventDate = eventDate;
-        this.message = message;
         this.target = target;
+        this.eventDate = eventDate;
+        this.message = message;
+        this.routingPath = routingPath;
     }
 
     @Override
@@ -57,9 +51,10 @@ public class Event {
 
         return new EqualsBuilder()
                 .append(id, event.id)
-                .append(eventType, event.eventType)
+                .append(target, event.target)
                 .append(eventDate, event.eventDate)
                 .append(message, event.message)
+                .append(routingPath, event.routingPath)
                 .isEquals();
     }
 
@@ -67,9 +62,10 @@ public class Event {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(eventType)
+                .append(target)
                 .append(eventDate)
                 .append(message)
+                .append(routingPath)
                 .toHashCode();
     }
 
@@ -77,9 +73,10 @@ public class Event {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
-                .append("eventType", eventType)
+                .append("targetId", target.getId())
                 .append("eventDate", eventDate)
                 .append("message", message)
+                .append("routingPath", routingPath)
                 .toString();
     }
 }

@@ -3,6 +3,7 @@ package com.pracownia.vanet.view;
 import com.google.common.collect.Lists;
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.devices.Device;
+import com.pracownia.vanet.model.devices.WormholeVehicle;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.network.NetworkBuilder;
@@ -58,7 +59,7 @@ public class Simulation implements Runnable {
     }
 
     private void addWormHole() {
-        List<Vehicle> added = addVehicles(2);
+        List<Vehicle> added = addWormholeVehicles(2);
         tunneledDevices.add(Pair.of(added.get(0), added.get(1)));
     }
 
@@ -84,9 +85,9 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 30.0));
-        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 30.0));
-        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 30.0));
+        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
+        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
+        devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
     }
 
     @Override
@@ -187,12 +188,24 @@ public class Simulation implements Runnable {
         List<Vehicle> result =  new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % 5),
-                                     carCounter.getAndIncrement(),
-                                     getCarRange(),
-                                     randomizeSpeed()));
+                                   carCounter.getAndIncrement(),
+                                   getCarRange(),
+                                   randomizeSpeed()));
         }
         if(devices.size() > 0) {
             result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 3));
+        }
+        devices.addAll(result);
+        return result;
+    }
+
+    public List<Vehicle> addWormholeVehicles(int amount) {
+        List<Vehicle> result =  new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            result.add(new WormholeVehicle(roads.get(i % 5),
+                                           carCounter.getAndIncrement(),
+                                           getCarRange(),
+                                           randomizeSpeed()));
         }
         devices.addAll(result);
         return result;

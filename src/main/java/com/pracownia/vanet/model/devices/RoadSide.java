@@ -35,7 +35,7 @@ public class RoadSide extends Device {
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString() + " " + getId());
+        System.out.println("Message Received: " + event.toString());
     }
 
     @Override

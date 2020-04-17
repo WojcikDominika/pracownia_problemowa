@@ -14,19 +14,21 @@ public class Task {
     AtomicInteger counter = new AtomicInteger();
     Device target;
     String message;
+    String routingPath;
 
     public Task(Device target, String message, int sendEverySeconds) {
         this.target = target;
         this.message = message;
         this.sendEverySeconds = sendEverySeconds;
         this.lastGenerated = Instant.now();
+        this.routingPath = "";
     }
 
     public Optional<Event> prepareEvent(){
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
             lastGenerated = Instant.now();
-            return Optional.of(new Event(counter.getAndIncrement(), EventType.CAR_ACCIDENT, new Date(), message, target));
+            return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, routingPath));
         } else{
             return Optional.empty();
         }
