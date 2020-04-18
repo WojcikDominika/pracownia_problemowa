@@ -1,6 +1,7 @@
-package com.pracownia.vanet.view;
+package com.pracownia.vanet.view.model;
 
 import com.pracownia.vanet.model.Point;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -8,7 +9,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-public class DeviceRepresentation extends Node {
+public class DeviceRepresentation extends Node implements Registerable {
     private static final double TEXT_SHIFT = 6.0;
     Circle deviceLocalisation;
     Circle deviceConnectionRange;
@@ -30,11 +31,13 @@ public class DeviceRepresentation extends Node {
         double vehicleX = currentLocation.getX();
         double vehicleY = currentLocation.getY();
 
-        deviceLocalisation.setCenterX(vehicleX);
-        deviceLocalisation.setCenterY(vehicleY);
-        deviceConnectionRange.setCenterX(vehicleX);
-        deviceConnectionRange.setCenterY(vehicleY);
-        updateLabelLocation();
+        Platform.runLater(() -> {
+            deviceLocalisation.setCenterX(vehicleX);
+            deviceLocalisation.setCenterY(vehicleY);
+            deviceConnectionRange.setCenterX(vehicleX);
+            deviceConnectionRange.setCenterY(vehicleY);
+            updateLabelLocation();
+        });
     }
 
     private void updateLabelLocation() {
@@ -42,12 +45,14 @@ public class DeviceRepresentation extends Node {
         this.text.setLayoutY(deviceLocalisation.getCenterY() + TEXT_SHIFT);
     }
 
+    @Override
     public void register(Group scene) {
         scene.getChildren().add(deviceLocalisation);
         scene.getChildren().add(deviceConnectionRange);
         scene.getChildren().add(text);
     }
 
+    @Override
     public void deregister(Group scene) {
         scene.getChildren().remove(deviceLocalisation);
         scene.getChildren().remove(deviceConnectionRange);

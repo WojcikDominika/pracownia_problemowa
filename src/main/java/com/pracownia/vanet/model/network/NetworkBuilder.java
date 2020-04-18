@@ -6,10 +6,7 @@ import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.model.devices.Vehicle;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NetworkBuilder {
@@ -21,15 +18,10 @@ public class NetworkBuilder {
         this.connector = connector;
     }
 
-    public NetworkBuilder withDevices(List<Device> devices) {
+    public NetworkBuilder withDevices(Collection<Device> devices) {
         this.devices.addAll(devices);
         return this;
     }
-
-//    public NetworkBuilder withRoadSides(List<RoadSide> roadSides) {
-//        devices.addAll(roadSides);
-//        return this;
-//    }
 
     public Network build() {
         Map<Device, NetworkNode> networkNodeByDevice = devices.stream()

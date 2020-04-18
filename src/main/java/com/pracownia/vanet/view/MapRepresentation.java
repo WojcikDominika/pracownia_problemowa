@@ -3,12 +3,11 @@ package com.pracownia.vanet.view;
 import com.google.common.collect.ImmutableList;
 import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.road.Road;
+import com.pracownia.vanet.view.model.DeviceRepresentation;
+import com.pracownia.vanet.view.model.Registerable;
+import com.pracownia.vanet.view.model.RoadRepresentation;
 import javafx.application.Platform;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +26,9 @@ public class MapRepresentation {
     private Group root;
     private final ShapeFactory shapeFactory;
     private List<Line> networkRepresentation = new ArrayList<>();
+    private List<Registerable> shortLiveViewObjects = new ArrayList<>();
     private Map<Device, DeviceRepresentation> deviceRepresentation = new HashMap<>();
+    private Map<Road, RoadRepresentation> roads = new HashMap<>();
 
 
     /*------------------------ METHODS REGION ------------------------*/
@@ -41,21 +42,10 @@ public class MapRepresentation {
         return deviceRepresentation.computeIfAbsent(device, register(shapeFactory::createDevice));
     }
 
-    private Function<Device, DeviceRepresentation> register(Function<Device, DeviceRepresentation> createDevice) {
-        return createDevice.andThen(obj -> {
-            Platform.runLater(() -> obj.register(root));
-            return obj;
-        });
+    public RoadRepresentation getRepresentation(Road road) {
+        return roads.computeIfAbsent(road, register(shapeFactory::createRoad));
     }
 
-    public void drawConnections(List<Line> linesToDraw) {
-        List<Node> toRemove = ImmutableList.copyOf(networkRepresentation);
-        Platform.runLater(() -> {
-            root.getChildren().removeAll(toRemove);
-            linesToDraw.forEach(line -> root.getChildren().add(line));
-        });
-        networkRepresentation = new ArrayList<>(linesToDraw);
-    }
 
     public void switchRangeCircles(MapScheme.Range config) {
         for (DeviceRepresentation device : deviceRepresentation.values()) {
@@ -63,9 +53,25 @@ public class MapRepresentation {
         }
     }
 
-    public void draw(Set<Line> roads) {
+    public void drawShortLived(List<? extends Registerable> elementsToDraw) {
         Platform.runLater(() -> {
-            roads.forEach(line -> root.getChildren().add(line));
+            elementsToDraw.forEach(element -> element.register(root));
+        });
+        shortLiveViewObjects.addAll(elementsToDraw);
+    }
+
+    public void clearShortLiveObject() {
+        List<Registerable> toDeregister = ImmutableList.copyOf(shortLiveViewObjects);
+        Platform.runLater(() -> {
+            toDeregister.forEach(element -> element.deregister(root));
+        });
+        shortLiveViewObjects.clear();
+    }
+
+    private <I, O extends Registerable> Function<I, O> register(Function<I, O> createDevice) {
+        return createDevice.andThen(obj -> {
+            Platform.runLater(() -> obj.register(root));
+            return obj;
         });
     }
 }

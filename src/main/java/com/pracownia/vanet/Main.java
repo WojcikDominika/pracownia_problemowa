@@ -1,7 +1,5 @@
 package com.pracownia.vanet;
 
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.view.ShapesCreator;
 import com.pracownia.vanet.view.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -28,15 +25,12 @@ import lombok.Setter;
 public class Main extends Application {
 
     /*------------------------ FIELDS REGION ------------------------*/
-    private CheckBox seeThrough;
-    private TextField trustLevelField;
     private TextField speedField;
     private TextField vehIdField;
     private TextField connEventsField;
     private TextField connVehField;
     private TextField connPointsField;
     private Group root = new Group();
-    private ShapesCreator shapesCreator;
     private boolean isRangeRendered = false;
     private Simulation simulation;
     private long startTime;
@@ -57,11 +51,6 @@ public class Main extends Application {
         });
 
         this.simulation = new Simulation(root);
-//        this.shapesCreator = new ShapesCreator(root, this.simulation, this);
-//
-//        shapesCreator.setRoutesLines(simulation);
-//        shapesCreator.setSourceEventCircles(simulation);
-//        shapesCreator.setStationaryPointCircles(simulation);
 
         setInterface(simulation);
 
@@ -93,13 +82,10 @@ public class Main extends Application {
         Button showRangeButton = new Button("Show Range");
         Button changeRangeButton = new Button("ChangeRange");
         Button spawnVehiclesButton = new Button("Spawn Vehicles");
-        Button spawnFakedVeehicle = new Button("Spawn fake vehicle");
         TextField vehiclesAmountField = new TextField();
         TextField rangeAmountField = new TextField();
         Label rangeAmountLabel = new Label("Range");
         Label vehiclesAmountLabel = new Label("Vehicle Amount");
-        ChoiceBox chooseFakeEvent = new ChoiceBox(FXCollections.observableArrayList(
-                "Car accident", "Speed camera", "Police control"));
 
         // Start stop simulation.
         Button startSimulation = new Button("Start simulation");
@@ -118,47 +104,14 @@ public class Main extends Application {
             stopTimer();
         });
 
-//        Button addHackerVehicle = new Button("Add hacker vehicle");
-//        addHackerVehicle.setLayoutX(1130.0);
-//        addHackerVehicle.setLayoutY(200.00);
-//        addHackerVehicle.setOnAction(e -> {
-//            shapesCreator.setCopyCircle(simulation.getMapRepresentation().addCopy());
-//        });
-
-//        Button teleportVehicle = new Button("Teleport a vehicle");
-//        teleportVehicle.setLayoutX(1130.0);
-//        teleportVehicle.setLayoutY(230.0);
-//        teleportVehicle.setOnAction(e -> {
-//            simulation.teleportVehicle();
-//        });
-
-//        Button saveVehicleButton = new Button("Save vehicle");
-//        saveVehicleButton.setLayoutX(950.0);
-//        saveVehicleButton.setLayoutY(280.);
-//        saveVehicleButton.setOnAction(e -> {
-//            Vehicle v = simulation.getMapRepresentation()
-//                    .getVehicles()
-//                    .get(Integer.parseInt(this.vehIdField.getText()));
-//            v.setSpeed(Double.parseDouble(this.speedField.getText()));
-//            v.setTrustLevel(Double.parseDouble(this.trustLevelField.getText()));
-//        });
-//
-//        Button clearNotSafe = new Button("Clear hackers");
-//        clearNotSafe.setLayoutX(1130.0);
-//        clearNotSafe.setLayoutY(265.0);
-//        clearNotSafe.setOnAction(e -> {
-//            simulation.deleteUnsafeCircles();
-//        });
+        Button addWormholeVehicle = new Button("Add wormhole attack");
+        addWormholeVehicle.setLayoutX(1130.0);
+        addWormholeVehicle.setLayoutY(200.00);
+        addWormholeVehicle.setOnAction(e -> {
+            simulation.addWormholeVehicles();
+        });
 
         // Vehicle informations.
-        this.trustLevelField = new TextField();
-        trustLevelField.setLayoutX(950.0);
-        trustLevelField.setLayoutY(400.0);
-
-        Label trustLevelLabel = new Label("Trust level");
-        trustLevelLabel.setLayoutX(950.0);
-        trustLevelLabel.setLayoutY(430.0);
-
         this.speedField = new TextField();
         speedField.setLayoutX(950.0);
         speedField.setLayoutY(460.0);
@@ -199,37 +152,6 @@ public class Main extends Application {
         connVehLabel.setLayoutX(950.0);
         connVehLabel.setLayoutY(730.0);
 
-//        ListView<Vehicle> hackerVehiclesList = new ListView<>();
-//        hackerVehiclesList.setLayoutX(1125.0);
-//        hackerVehiclesList.setLayoutY(350.0);
-//        hackerVehiclesList.setMaxHeight(100);
-//        hackerVehiclesList.setMaxWidth(175.0);
-//        hackerVehiclesList.setItems(simulation.getMapRepresentation().getVehicles());
-        //.filtered(x->!x.safe)
-
-        seeThrough = new CheckBox("Widac?");
-        seeThrough.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue,
-                                Boolean aBoolean, Boolean t1) {
-                if (t1) {
-                    simulation.setHere(Color.TRANSPARENT);
-                } else {
-                    simulation.setHere(Color.RED);
-                }
-            }
-        });
-        seeThrough.setLayoutX(1150);
-        seeThrough.setLayoutY(155.0);
-
-        // Other stuff.
-        chooseFakeEvent.setLayoutX(1130.0);
-        chooseFakeEvent.setLayoutY(80.0);
-        chooseFakeEvent.setValue("Car accident");
-
-        spawnFakedVeehicle.setLayoutX(1130.0);
-        spawnFakedVeehicle.setLayoutY(110.0);
-
         showRangeButton.setLayoutX(950.0);
         showRangeButton.setLayoutY(80.0);
 
@@ -250,7 +172,7 @@ public class Main extends Application {
         vehiclesAmountField.setText("10");
 
         changeRangeButton.setOnAction(e -> simulation.changeVehiclesRanges(Double.parseDouble(rangeAmountField
-                .getText())));
+                                                                                                      .getText())));
 
         showRangeButton.setOnAction(e -> {
             isRangeRendered = !isRangeRendered;
@@ -261,47 +183,31 @@ public class Main extends Application {
             }
         });
 
-//        spawnFakedVeehicle.setOnAction(e -> {
-//            simulation.getMapRepresentation().addFakeVehicle(chooseFakeEvent.getValue().toString());
-//            shapesCreator.setVehicleCircles(simulation, 1);
-//            shapesCreator.setLabels(simulation, 1);
-//
-//        });
-
         spawnVehiclesButton.setOnAction(e -> {
             simulation.addVehicles(Integer.parseInt(vehiclesAmountField.getText()));
         });
 
         root.getChildren()
-                .addAll(chooseFakeEvent,
-                        spawnFakedVeehicle,
-                        showRangeButton,
-                        spawnVehiclesButton,
-                        vehiclesAmountField,
-                        stopSimulation,
-//                        saveVehicleButton,
-                        trustLevelField,
-                        trustLevelLabel,
-                        speedField,
-                        speedLabel,
-                        vehIdField,
-                        vehIdLabel,
-                        connPointsField,
-                        connPointsLabel,
-                        connEventsField,
-                        connEventsLabel,
-                        connVehField,
-                        connVehLabel,
-                        startSimulation,
-                        vehiclesAmountLabel,
-                        rangeAmountLabel,
-                        rangeAmountField,
-                        changeRangeButton,
-//                        teleportVehicle,
-//                        addHackerVehicle,
-//                        clearNotSafe,
-//                        hackerVehiclesList,
-                        seeThrough);
+            .addAll(showRangeButton,
+                    spawnVehiclesButton,
+                    vehiclesAmountField,
+                    stopSimulation,
+                    speedField,
+                    speedLabel,
+                    vehIdField,
+                    vehIdLabel,
+                    connPointsField,
+                    connPointsLabel,
+                    connEventsField,
+                    connEventsLabel,
+                    connVehField,
+                    connVehLabel,
+                    startSimulation,
+                    addWormholeVehicle,
+                    vehiclesAmountLabel,
+                    rangeAmountLabel,
+                    rangeAmountField,
+                    changeRangeButton);
 
     }
 }
