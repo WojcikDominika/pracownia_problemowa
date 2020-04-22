@@ -5,8 +5,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.devices.WormholeVehicle;
+import com.pracownia.vanet.model.devices.*;
+import com.pracownia.vanet.model.event.EventSource;
+import com.pracownia.vanet.model.event.EventType;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.network.NetworkBuilder;
@@ -14,8 +15,6 @@ import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
 import com.pracownia.vanet.model.road.CrossRoad;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.model.road.Road;
 import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
@@ -60,6 +59,7 @@ public class Simulation implements Runnable {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
+        buildCarAccidents();
         mapRepresentation = new MapRepresentation(shapeFactory, scene);
         roads.forEach(mapRepresentation::getRepresentation);
     }
@@ -89,6 +89,12 @@ public class Simulation implements Runnable {
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
+    }
+
+    private void buildCarAccidents() {
+        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(250.0, 210.0), 20.0));
+        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(500.0, 410.0), 20.0));
+        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(750.0, 610.0), 20.0));
     }
 
     @Override
@@ -245,6 +251,17 @@ public class Simulation implements Runnable {
             tunneledDevices.add(Connection.between(v1, v2));
         }
         return Lists.newArrayList(v1, v2);
+    }
+
+    public Vehicle addBlackholeVehicle() {
+        Vehicle blackholeVehicle = new BlackholeVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
+        synchronized (devices) {
+            devices.add(blackholeVehicle);
+        }
+        return blackholeVehicle;
     }
 
     private double getCarRange() {

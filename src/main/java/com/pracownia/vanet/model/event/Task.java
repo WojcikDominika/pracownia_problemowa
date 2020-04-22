@@ -24,12 +24,12 @@ public class Task {
         this.routingPath = "";
     }
 
-    public Optional<Event> prepareEvent(){
+    public Optional<Event> prepareEvent() {
         Instant now = Instant.now();
-        if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
+        if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds) {
             lastGenerated = Instant.now();
             return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, routingPath));
-        } else{
+        } else {
             return Optional.empty();
         }
     }

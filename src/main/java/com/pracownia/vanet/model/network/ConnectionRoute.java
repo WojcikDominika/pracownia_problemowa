@@ -24,6 +24,7 @@ public class ConnectionRoute {
 
 
     public void send(Event event) {
+        System.out.println( "Dzień dobry" );
         for (int i = 1; i < route.size(); i++) {
             // Simulates sending for malicious event manipulation
             event = route.get(i).transfer(event, route.get(i - 1));
