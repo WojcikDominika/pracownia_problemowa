@@ -95,7 +95,6 @@ public class Vehicle extends Device {
              .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
     }
 
-
     @Override
     public Event transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
