@@ -111,6 +111,13 @@ public class Main extends Application {
             simulation.addWormholeVehicles();
         });
 
+        Button findHackers = new Button("Find Hackers");
+        findHackers.setLayoutX(1130.0);
+        findHackers.setLayoutY(250.00);
+        findHackers.setOnAction(e -> {
+            simulation.showHackers();
+        });
+
         // Vehicle informations.
         this.speedField = new TextField();
         speedField.setLayoutX(950.0);
@@ -193,6 +200,7 @@ public class Main extends Application {
                     vehiclesAmountField,
                     stopSimulation,
                     speedField,
+                    findHackers,
                     speedLabel,
                     vehIdField,
                     vehIdLabel,
@@ -208,7 +216,6 @@ public class Main extends Application {
                     rangeAmountLabel,
                     rangeAmountField,
                     changeRangeButton);
-
     }
 }
     

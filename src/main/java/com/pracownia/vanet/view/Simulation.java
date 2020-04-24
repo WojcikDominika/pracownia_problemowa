@@ -16,6 +16,7 @@ import com.pracownia.vanet.model.network.NetworkBuilder;
 import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
+import com.pracownia.vanet.model.protection.SAMAnalysis;
 import com.pracownia.vanet.model.road.CrossRoad;
 import com.pracownia.vanet.model.road.Road;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
@@ -24,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -152,6 +154,16 @@ public class Simulation implements Runnable {
         return tunnels::get;
     }
 
+    public void showHackers() {
+        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
+                                                        .setColor(Color.BLACK));
+        SAMAnalysis samAnalysis = new SAMAnalysis(devices);
+        List<Device> vehiclesBiggerThan = samAnalysis.runAnalysis();
+
+        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
+                                                              .setColor(Color.HOTPINK));
+    }
+
     private void drawDevices( Collection<Device> devices ) {
         for (Device device : devices) {
             DeviceRepresentation representation = mapRepresentation.getRepresentation(device);
@@ -274,7 +286,7 @@ public class Simulation implements Runnable {
     }
 
     private double randomizeSpeed() {
-        return random.nextDouble() / 2.0 + 2;
+        return random.nextDouble()*7 / 2.0 + 2;
     }
 
 }

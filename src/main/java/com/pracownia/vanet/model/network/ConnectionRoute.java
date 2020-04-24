@@ -24,9 +24,13 @@ public class ConnectionRoute {
 
 
     public void send(Event event) {
+        route.get(0).incrementOccurrences();
         for (int i = 1; i < route.size(); i++) {
-            // Simulates sending for malicious event manipulation
-            event = route.get(i).transfer(event, route.get(i - 1));
+            Device device = route.get(i);
+            device.incrementOccurrences();
+            // Simulates sending for malicious event manipulation1
+            event = device
+                    .transfer(event, route.get(i - 1));
         }
         destination.receive(event);
     }
