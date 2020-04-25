@@ -15,8 +15,11 @@ public class BlackholeVehicle extends Vehicle {
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        event.setMessage("Message is not sent to connected vehicles!");
-        event.setRoutingPath(event.getRoutingPath() + "->" + getId());
+        if (receivedFrom == this ? !event.getRoutingPath().contains("->") : false) {
+            getTask().done = true;
+        }
+        System.out.println("Message ID " + event.getId() + " blocked by 8l4cKh0l3 ID " + this.getId());
+        event.setId(-1);
         return event;
     }
 }

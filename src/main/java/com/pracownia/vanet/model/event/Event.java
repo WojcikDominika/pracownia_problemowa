@@ -21,12 +21,11 @@ public class Event {
     private Date eventDate;
     private String message;
     private String routingPath;
+    private Device target;
 
     public Device getTarget() {
         return target;
     }
-
-    private Device target;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Event(int id, Device target, Date eventDate, String message, String routingPath) {

@@ -25,11 +25,18 @@ public class Vehicle extends Device {
     private Road road;
     private double speed;
     private boolean direction = true; // True if from starting point to end point
-
     private Date date;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
     private Task task;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public Task getTask() {
+        return this.task;
+    }
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
@@ -96,6 +103,9 @@ public class Vehicle extends Device {
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
+        if (!event.getRoutingPath().contains("->")) {
+            this.task.done = true;
+        }
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
         return event;
     }

@@ -30,13 +30,11 @@ public class MapRepresentation {
     private Map<Device, DeviceRepresentation> deviceRepresentation = new HashMap<>();
     private Map<Road, RoadRepresentation> roads = new HashMap<>();
 
-
     /*------------------------ METHODS REGION ------------------------*/
     public MapRepresentation(ShapeFactory shapeFactory, Group root) {
         this.shapeFactory = shapeFactory;
         this.root = root;
     }
-
 
     public DeviceRepresentation getRepresentation(Device device) {
         return deviceRepresentation.computeIfAbsent(device, register(shapeFactory::createDevice));
@@ -45,7 +43,6 @@ public class MapRepresentation {
     public RoadRepresentation getRepresentation(Road road) {
         return roads.computeIfAbsent(road, register(shapeFactory::createRoad));
     }
-
 
     public void switchRangeCircles(MapScheme.Range config) {
         for (DeviceRepresentation device : deviceRepresentation.values()) {

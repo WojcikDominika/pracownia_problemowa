@@ -104,7 +104,6 @@ public class Main extends Application {
             stopTimer();
         });
 
-
         Button addWormholeVehicle = new Button("Add wormhole attack");
         addWormholeVehicle.setLayoutX(1200.0);
         addWormholeVehicle.setLayoutY(200.00);

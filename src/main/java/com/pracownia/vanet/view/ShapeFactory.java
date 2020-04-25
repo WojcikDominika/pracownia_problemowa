@@ -18,7 +18,9 @@ public class ShapeFactory {
         DeviceRepresentation deviceRepresentation = new DeviceRepresentation(label(device.getId()),
                                                                              devicePointCircle(device),
                                                                              deviceRange(device));
-        if (device instanceof Vehicle) {
+        if (device instanceof BlackholeVehicle) {
+            deviceRepresentation.setColor(Color.GREEN);
+        } else if (device instanceof Vehicle) {
             deviceRepresentation.setColor(Color.BLACK);
         } else if (device instanceof RoadSide) {
             deviceRepresentation.setColor(Color.TEAL);

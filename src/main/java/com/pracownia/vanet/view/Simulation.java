@@ -59,7 +59,7 @@ public class Simulation implements Runnable {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
-        buildCarAccidents();
+//        buildCarAccidents();
         mapRepresentation = new MapRepresentation(shapeFactory, scene);
         roads.forEach(mapRepresentation::getRepresentation);
     }
@@ -95,6 +95,55 @@ public class Simulation implements Runnable {
         devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(250.0, 210.0), 20.0));
         devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(500.0, 410.0), 20.0));
         devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(750.0, 610.0), 20.0));
+    }
+
+    public List<Vehicle> addVehicles(int amount) {
+        List<Vehicle> result = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
+                    carCounter.getAndIncrement(),
+                    getCarRange(),
+                    randomizeSpeed()));
+            result.get(i).registerTask(new Task(devices.stream().findFirst().get(), "Sieema", 1));
+        }
+        if (devices.size() > 0) {
+            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 1));
+        }
+        synchronized (devices) {
+            devices.addAll(result);
+        }
+        return result;
+    }
+
+    public List<Vehicle> addWormholeVehicles() {
+        Vehicle v1 = new WormholeVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
+        Vehicle v2 = new WormholeVehicle(roads.get(1 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
+
+        synchronized (devices) {
+            devices.add(v1);
+            devices.add(v2);
+        }
+        synchronized (tunneledDevices) {
+            tunneledDevices.add(Connection.between(v1, v2));
+        }
+        return Lists.newArrayList(v1, v2);
+    }
+
+    public Vehicle addBlackholeVehicle() {
+        Vehicle blackholeVehicle = new BlackholeVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
+        synchronized (devices) {
+            devices.add(blackholeVehicle);
+        }
+        return blackholeVehicle;
     }
 
     @Override
@@ -214,54 +263,6 @@ public class Simulation implements Runnable {
                 }
             }
         }
-    }
-
-    public List<Vehicle> addVehicles(int amount) {
-        List<Vehicle> result = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
-            result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
-                                   carCounter.getAndIncrement(),
-                                   getCarRange(),
-                                   randomizeSpeed()));
-        }
-        if (devices.size() > 0) {
-            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 3));
-        }
-        synchronized (devices) {
-            devices.addAll(result);
-        }
-        return result;
-    }
-
-    public List<Vehicle> addWormholeVehicles() {
-        Vehicle v1 = new WormholeVehicle(roads.get(0 % START_POINTS_NUMBER),
-                                         carCounter.getAndIncrement(),
-                                         getCarRange(),
-                                         randomizeSpeed());
-        Vehicle v2 = new WormholeVehicle(roads.get(1 % START_POINTS_NUMBER),
-                                         carCounter.getAndIncrement(),
-                                         getCarRange(),
-                                         randomizeSpeed());
-
-        synchronized (devices) {
-            devices.add(v1);
-            devices.add(v2);
-        }
-        synchronized (tunneledDevices) {
-            tunneledDevices.add(Connection.between(v1, v2));
-        }
-        return Lists.newArrayList(v1, v2);
-    }
-
-    public Vehicle addBlackholeVehicle() {
-        Vehicle blackholeVehicle = new BlackholeVehicle(roads.get(0 % START_POINTS_NUMBER),
-                carCounter.getAndIncrement(),
-                getCarRange(),
-                randomizeSpeed());
-        synchronized (devices) {
-            devices.add(blackholeVehicle);
-        }
-        return blackholeVehicle;
     }
 
     private double getCarRange() {
