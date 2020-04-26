@@ -5,27 +5,22 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.devices.WormholeVehicle;
+import com.pracownia.vanet.model.devices.*;
 import com.pracownia.vanet.model.event.Task;
+import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.network.NetworkBuilder;
 import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
 import com.pracownia.vanet.model.road.CrossRoad;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.model.road.Road;
-import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
 import com.pracownia.vanet.view.model.NetworkConnectionRepresentation;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -219,7 +214,7 @@ public class Simulation implements Runnable {
                                    randomizeSpeed()));
         }
         if (devices.size() > 0) {
-            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 3));
+            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 2));
         }
         synchronized (devices) {
             devices.addAll(result);
@@ -245,6 +240,19 @@ public class Simulation implements Runnable {
             tunneledDevices.add(Connection.between(v1, v2));
         }
         return Lists.newArrayList(v1, v2);
+    }
+
+    public List<Vehicle> addGreyholeVehicle() {
+        Vehicle v1 = new GreyVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed(),
+                devices
+        );
+        synchronized (devices) {
+            devices.add(v1);
+        }
+        return Lists.newArrayList(v1);
     }
 
     private double getCarRange() {
