@@ -29,15 +29,17 @@ public class Vehicle extends Device {
     private Date date;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private Task task;
+    private List<Task> tasks;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
+        this.tasks = new ArrayList<>();
         road = new Road();
         currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
+        this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
         this.range = range;
@@ -83,16 +85,16 @@ public class Vehicle extends Device {
 
     @Override
     public void send(Network dynamicNetwork) {
-        if (task == null) {
+        if (tasks.isEmpty()) {
             return;
         }
-
-        task.prepareEvent().ifPresent(event -> {
-            Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
-            event.setRoutingPath(String.valueOf(id));
-            route.ifPresent(r -> r.send(event));
-        });
+        tasks.stream()
+             .map(task -> task.prepareEventFor(this))
+             .filter(Optional::isPresent)
+             .map(Optional::get)
+             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
     }
+
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
@@ -112,7 +114,7 @@ public class Vehicle extends Device {
 
     @Override
     public void registerTask(Task task) {
-        this.task = task;
+        this.tasks.add(task);
     }
 
     @Override

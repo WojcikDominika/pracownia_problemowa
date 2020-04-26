@@ -6,31 +6,37 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.devices.Device;
+import com.pracownia.vanet.model.devices.RoadSide;
+import com.pracownia.vanet.model.devices.Vehicle;
 import com.pracownia.vanet.model.devices.WormholeVehicle;
 import com.pracownia.vanet.model.event.Task;
+import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.network.NetworkBuilder;
 import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
 import com.pracownia.vanet.model.road.CrossRoad;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.model.road.Road;
-import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
 import com.pracownia.vanet.view.model.NetworkConnectionRepresentation;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -52,7 +58,8 @@ public class Simulation implements Runnable {
     private List<CrossRoad> crossRoads = new ArrayList<>();
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
-    private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private ObservableList<Connection> tunneledDevices =
+            FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
 
     /*------------------------ METHODS REGION ------------------------*/
@@ -122,7 +129,9 @@ public class Simulation implements Runnable {
 
     private Function<Device, Collection<Device>> observingProvider(ObservableList<Connection> tunneledDevices) {
         //TODO Refactor
-        Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys().arrayListValues().build());
+        Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys()
+                                                                                         .arrayListValues()
+                                                                                         .build());
         synchronized (tunneledDevices) {
             tunneledDevices.forEach(deviceDevicePair -> {
                 tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
@@ -132,10 +141,11 @@ public class Simulation implements Runnable {
 
         tunneledDevices.addListener((ListChangeListener<? super Connection>) change -> {
             while (change.next()) {
-                change.getAddedSubList().forEach(deviceDevicePair -> {
-                    tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
-                    tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
-                });
+                change.getAddedSubList()
+                      .forEach(deviceDevicePair -> {
+                          tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
+                          tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
+                      });
             }
         });
 
@@ -151,17 +161,20 @@ public class Simulation implements Runnable {
 
     private static void move(Collection<Device> devices, Collection<CrossRoad> crossRoads) {
         synchronized (devices) {
-            devices.stream().forEach(Device::move);
+            devices.stream()
+                   .forEach(Device::move);
             for (Device device : devices) {
                 Optional<CrossRoad> nearestCrossRoad = crossRoads.parallelStream()
-                                                                 .map(cr -> Pair.of(cr, cr.getDistanceToCrossing(device)))
+                                                                 .map(cr -> Pair.of(cr,
+                                                                                    cr.getDistanceToCrossing(device)))
                                                                  .min(Comparator.comparing(Pair::getValue))
                                                                  .filter(pair -> pair.getValue() < CrossRoad.DETECTION_RANGE)
                                                                  .map(Pair::getKey);
                 nearestCrossRoad.ifPresent(device::turn);
             }
         }
-        crossRoads.parallelStream().forEach(CrossRoad::resetLastTransportedVehicle);
+        crossRoads.parallelStream()
+                  .forEach(CrossRoad::resetLastTransportedVehicle);
     }
 
 
@@ -204,7 +217,8 @@ public class Simulation implements Runnable {
             for (Device device : devices) {
                 if (device instanceof Vehicle) {
                     device.setRange(range);
-                    mapRepresentation.getRepresentation(device).setConnectionRange(range);
+                    mapRepresentation.getRepresentation(device)
+                                     .setConnectionRange(range);
                 }
             }
         }
@@ -219,7 +233,15 @@ public class Simulation implements Runnable {
                                    randomizeSpeed()));
         }
         if (devices.size() > 0) {
-            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 3));
+            for (int i = 0; i < result.size(); i++) {
+                for (int j = 0; j < devices.size(); j++) {
+                    result.get(i)
+                          .registerTask(new Task(devices.stream()
+                                                        .skip(j)
+                                                        .findFirst()
+                                                        .get(), "Ala ma kota", 3));
+                }
+            }
         }
         synchronized (devices) {
             devices.addAll(result);
