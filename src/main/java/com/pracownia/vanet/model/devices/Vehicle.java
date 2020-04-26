@@ -27,14 +27,6 @@ public class Vehicle extends Device {
     protected Point previousCrossing;
     protected Task task;
 
-//    public int getId() {
-//        return this.id;
-//    }
-
-//    public Task getTask() {
-//        return this.task;
-//    }
-
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
         this.road = new Road();
@@ -91,7 +83,7 @@ public class Vehicle extends Device {
             return;
         }
 
-        task.prepareEvent().ifPresent(event -> {
+        task.prepareEvent(this).ifPresent(event -> {
             Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
             event.setRoutingPath(String.valueOf(id));
             route.ifPresent(r -> r.send(event));
@@ -110,6 +102,9 @@ public class Vehicle extends Device {
     @Override
     public void receive(Event event) {
         System.out.println("Message Received: " + event.toString());
+        if (event.ifIdentityCheck()) {
+            event.source.receive(new Event(event.getId(), this, event.source, new Date(), this.privateId.toString(), "" + id));
+        }
     }
 
     @Override

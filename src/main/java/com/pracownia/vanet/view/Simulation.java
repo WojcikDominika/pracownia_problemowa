@@ -85,11 +85,16 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-//        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 500.0), 100.0));
+        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 100.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
-        devices.forEach(device -> this.trustedDevices.add(device.getPrivateId()));
+        if (devices.stream().findFirst().get() instanceof  SIN) {
+            devices.stream().findFirst().get().registerTask(new Task("Kim jestes?", 1));
+            devices.forEach(device -> {
+                devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId());
+            });
+        }
     }
 
     private void buildCarAccidents() {
@@ -106,8 +111,7 @@ public class Simulation implements Runnable {
                     carCounter.getAndIncrement(),
                     getCarRange(),
                     randomizeSpeed()));
-//            devices.stream().findFirst().get().getTrustedVehicles().add(result.get(i).getPrivateId());
-            this.trustedDevices.add(result.get(i).getPrivateId());
+            devices.stream().findFirst().get().asSIN().getTrustedDevices().add(result.get(i).getPrivateId());
             result.get(i).registerTask(new Task((Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Siema", 1));
         }
 //        if (devices.size() > 0) {
@@ -116,7 +120,6 @@ public class Simulation implements Runnable {
         synchronized (devices) {
             devices.addAll(result);
         }
-//        devices.stream().findFirst().get().addTrustedDevices(this.trustedDevices);
 
         return result;
     }

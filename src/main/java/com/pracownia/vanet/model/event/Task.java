@@ -25,16 +25,24 @@ public class Task {
         this.routingPath = "";
     }
 
+    public Task(String message, int sendEverySeconds) {
+        this.target = null;
+        this.message = message;
+        this.sendEverySeconds = sendEverySeconds;
+        this.lastGenerated = Instant.now();
+        this.routingPath = "";
+    }
+
     public boolean ifDone() {
         return this.done;
     }
 
-    public Optional<Event> prepareEvent() {
+    public Optional<Event> prepareEvent(Device source) {
         if (!this.done) {
             Instant now = Instant.now();
             if (Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds) {
                 lastGenerated = Instant.now();
-                return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, routingPath));
+                return Optional.of(new Event(counter.getAndIncrement(), source, target, new Date(), message, routingPath));
             } else {
                 return Optional.empty();
             }

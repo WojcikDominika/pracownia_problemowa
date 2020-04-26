@@ -37,7 +37,9 @@ public abstract class Device {
     public abstract Event transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
     public abstract void turn(CrossRoad crossRoad);
-
     public abstract void registerTask(Task task);
+    public SIN asSIN() {
+        return (SIN) this;
+    }
 }
     
