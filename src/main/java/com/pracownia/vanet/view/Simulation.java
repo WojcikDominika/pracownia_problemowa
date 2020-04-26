@@ -5,10 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.devices.RoadSide;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.WormholeVehicle;
+import com.pracownia.vanet.model.devices.*;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Network;
@@ -279,6 +276,19 @@ public class Simulation implements Runnable {
             tunneledDevices.add(Connection.between(v1, v2));
         }
         return Lists.newArrayList(v1, v2);
+    }
+
+    public List<Vehicle> addGreyholeVehicle() {
+        Vehicle v1 = new GreyVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed(),
+                devices
+        );
+        synchronized (devices) {
+            devices.add(v1);
+        }
+        return Lists.newArrayList(v1);
     }
 
     private double getCarRange() {

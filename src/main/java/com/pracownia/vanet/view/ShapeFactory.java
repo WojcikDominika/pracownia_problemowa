@@ -1,10 +1,7 @@
 package com.pracownia.vanet.view;
 
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.devices.RoadSide;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.WormholeVehicle;
+import com.pracownia.vanet.model.devices.*;
 import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.road.Road;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
@@ -21,7 +18,9 @@ public class ShapeFactory {
         DeviceRepresentation deviceRepresentation = new DeviceRepresentation(label(device.getId()),
                                                                              devicePointCircle(device),
                                                                              deviceRange(device));
-        if (device instanceof Vehicle) {
+        if (device instanceof GreyVehicle) {
+            deviceRepresentation.setColor(Color.GREY);
+        } else if (device instanceof Vehicle) {
             deviceRepresentation.setColor(Color.BLACK);
         } else if (device instanceof RoadSide) {
             deviceRepresentation.setColor(Color.TEAL);

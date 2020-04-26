@@ -15,6 +15,7 @@ public class Task {
     Device target;
     String message;
     String routingPath;
+    boolean done = false;
 
     public Task(Device target, String message, int sendEverySeconds) {
         this.target = target;
@@ -24,6 +25,14 @@ public class Task {
         this.routingPath = "";
     }
 
+    public boolean isDone() {
+        return this.done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+/*
     public Optional<Event> prepareEvent(){
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
@@ -32,5 +41,18 @@ public class Task {
         } else{
             return Optional.empty();
         }
+    }*/
+
+    public Optional<Event> prepareEvent() {
+        if (!this.done) {
+            Instant now = Instant.now();
+            if (Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds) {
+                lastGenerated = Instant.now();
+                return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, routingPath));
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
     }
 }

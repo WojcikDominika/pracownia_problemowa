@@ -3,18 +3,12 @@ package com.pracownia.vanet;
 import com.pracownia.vanet.view.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.Getter;
@@ -113,9 +107,17 @@ public class Main extends Application {
 
         Button findHackers = new Button("Find Hackers");
         findHackers.setLayoutX(1130.0);
-        findHackers.setLayoutY(250.00);
+        findHackers.setLayoutY(300.00);
         findHackers.setOnAction(e -> {
             simulation.showHackers();
+        });
+
+        Button addGreyholeVehicle = new Button("Add greyhole attack");
+        addGreyholeVehicle.setLayoutX(1130.0);
+        addGreyholeVehicle.setLayoutY(250.00);
+        addGreyholeVehicle.setOnAction(e -> {
+            simulation.addGreyholeVehicle();
+
         });
 
         // Vehicle informations.
@@ -212,6 +214,7 @@ public class Main extends Application {
                     connVehLabel,
                     startSimulation,
                     addWormholeVehicle,
+                    addGreyholeVehicle,
                     vehiclesAmountLabel,
                     rangeAmountLabel,
                     rangeAmountField,
