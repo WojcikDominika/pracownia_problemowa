@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -34,11 +35,13 @@ public class Vehicle extends Device {
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
         this.tasks = new ArrayList<>();
+        this.occurrences = new AtomicInteger();
         road = new Road();
         currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
+        this.occurrences = new AtomicInteger();
         this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
@@ -94,7 +97,6 @@ public class Vehicle extends Device {
              .map(Optional::get)
              .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
     }
-
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {

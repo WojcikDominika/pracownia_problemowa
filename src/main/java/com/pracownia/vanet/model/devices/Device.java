@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -22,9 +23,11 @@ public abstract class Device {
     protected int id;
     protected Point currentLocation = new Point();
     protected double range;
+    protected AtomicInteger occurrences;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {
+        occurrences = new AtomicInteger(0);
         this.id = id;
         this.currentLocation = currentLocation;
         this.range = range;
@@ -35,7 +38,12 @@ public abstract class Device {
     public abstract Event transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
     public abstract void turn(CrossRoad crossRoad);
-
     public abstract void registerTask(Task task);
+    public void incrementOccurrences() {
+        this.occurrences.incrementAndGet();
+    }
+    public AtomicInteger getOccurrences() {
+        return occurrences;
+    }
 }
     
