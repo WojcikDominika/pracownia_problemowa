@@ -6,6 +6,8 @@ import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 
+import java.util.Set;
+
 public class RoadSide extends Device {
 
     /*------------------------ FIELDS REGION ------------------------*/
@@ -45,6 +47,11 @@ public class RoadSide extends Device {
 
     @Override
     public void registerTask(Task task) {
+        //TODO
+    }
 
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        //Nothing
     }
 }

@@ -101,10 +101,16 @@ public class Vehicle extends Device {
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
         if (event.ifIdentityCheck()) {
-            event.source.receive(new Event(event.getId(), this, event.source, new Date(), this.privateId.toString(), "" + id));
+            System.out.println("Message Received kurwa: " + event.toString());
+            event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), this.privateId.toString(), "" + id));
         }
+//        if (event.getSource() instanceof SIN && !event.ifIdentityCheck()) {
+//            for (String id : event.getMessage().split(",")) {
+//                this.tr
+//            }
+//            System.out.println(event.toString());
+//        }
     }
 
     @Override
@@ -120,6 +126,11 @@ public class Vehicle extends Device {
     @Override
     public String toString() {
         return "ID:\t" + id;
+    }
+
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        this.fakeDevices.addAll(fakeDevices);
     }
 }
     

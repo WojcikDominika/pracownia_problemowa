@@ -9,26 +9,20 @@ import com.pracownia.vanet.model.road.CrossRoad;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 @Setter
 public class SIN extends Device {
 
     /*------------------------ FIELDS REGION ------------------------*/
-    private List<UUID> trustedDevices = new ArrayList<>();
+    private Set<String> trustedDevices = new HashSet<>();
     protected Task task;
 
     /*------------------------ METHODS REGION ------------------------*/
     public SIN(int id, Point currentLocation, double range) {
         super(id, currentLocation, range);
-    }
-
-    public void addTrustedDevices(List<UUID> trustedDevices) {
-        this.trustedDevices.addAll(trustedDevices);
     }
 
     @Override
@@ -43,13 +37,15 @@ public class SIN extends Device {
         }
 
         dynamicNetwork.getConnectedDevices(this).forEach(device -> {
-            task.prepareEvent(this).ifPresent(event -> {
-                event.identityCheck = true;
-                event.setTarget(device);
-                Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
-                event.setRoutingPath(String.valueOf(id));
-                route.ifPresent(r -> r.send(event));
-            });
+            if (device instanceof Vehicle) {
+                task.prepareEvent(this).ifPresent(event -> {
+                    event.setIdentityCheck(true);
+                    event.setTarget(device);
+                    Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
+                    event.setRoutingPath(String.valueOf(id));
+                    route.ifPresent(r -> r.send(event));
+                });
+            }
         });
     }
 
@@ -60,12 +56,30 @@ public class SIN extends Device {
 
     @Override
     public void receive (Event event) {
-        System.out.println(event.toString());
+//        this.trustedDevices.forEach(id -> System.out.println(id));
+        if (!this.trustedDevices.contains(event.getMessage())) {
+            System.out.println("Blackhole detected!");
+            this.fakeDevices.add(event.getSource().getId());
+        }
+
+        if (!this.fakeDevices.isEmpty()) {
+//            String fakeIds = "";
+//            for (Integer id : this.fakeDevices) {
+//                fakeIds += id + ",";
+//            }
+//            event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), fakeIds, "" + id));
+            event.getSource().receiveFakeDevices(this.fakeDevices);
+        }
     }
 
     @Override
     public void turn(CrossRoad crossRoad) {
         //Does not move
+    }
+
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        //Nothing
     }
 
     @Override

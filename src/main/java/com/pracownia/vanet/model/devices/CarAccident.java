@@ -8,6 +8,7 @@ import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class CarAccident extends Device {
 
@@ -50,5 +51,10 @@ public class CarAccident extends Device {
     @Override
     public void registerTask(Task task) {
 
+    }
+
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        //Nothing
     }
 }

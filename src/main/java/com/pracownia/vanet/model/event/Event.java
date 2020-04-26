@@ -19,11 +19,11 @@ public class Event {
     private int id;
     private EventType eventType;
     private Date eventDate;
-    private String message;
-    public String routingPath;
-    public Device source;
+    public String message;
+    private String routingPath;
+    private Device source;
     private Device target;
-    public boolean identityCheck = false;
+    private boolean identityCheck = false;
 
     public Device getTarget() {
         return target;

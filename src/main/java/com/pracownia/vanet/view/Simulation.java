@@ -51,7 +51,6 @@ public class Simulation implements Runnable {
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
     private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
-    private List<UUID> trustedDevices = new ArrayList<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Simulation(Group scene) {
@@ -85,14 +84,14 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 100.0));
+        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 1000.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
         if (devices.stream().findFirst().get() instanceof  SIN) {
             devices.stream().findFirst().get().registerTask(new Task("Kim jestes?", 1));
             devices.forEach(device -> {
-                devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId());
+                devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId().toString());
             });
         }
     }
@@ -111,8 +110,10 @@ public class Simulation implements Runnable {
                     carCounter.getAndIncrement(),
                     getCarRange(),
                     randomizeSpeed()));
-            devices.stream().findFirst().get().asSIN().getTrustedDevices().add(result.get(i).getPrivateId());
-            result.get(i).registerTask(new Task((Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Siema", 1));
+            devices.stream().findFirst().get().asSIN().getTrustedDevices().add(result.get(i).getPrivateId().toString());
+            result.get(i).registerTask(new Task(devices.stream().findFirst().get() instanceof  SIN ?
+                    (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber) + 1] :
+                    (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Siema", 1));
         }
 //        if (devices.size() > 0) {
 //            result.get(0).registerTask(new Task(devices.stream().anyMatch(device -> device.getId() == Math.abs(random.nextInt() % roadSidesNumber)), "Ala ma kota", 1));

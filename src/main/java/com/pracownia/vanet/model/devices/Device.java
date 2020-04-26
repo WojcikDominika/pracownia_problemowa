@@ -9,10 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -24,6 +21,7 @@ public abstract class Device {
     protected Point currentLocation = new Point();
     protected double range;
     protected UUID privateId = UUID.randomUUID();
+    protected Set<Integer> fakeDevices = new HashSet<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {
@@ -37,6 +35,7 @@ public abstract class Device {
     public abstract Event transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
     public abstract void turn(CrossRoad crossRoad);
+    public abstract void receiveFakeDevices(Set<Integer> fakeDevices);
     public abstract void registerTask(Task task);
     public SIN asSIN() {
         return (SIN) this;
