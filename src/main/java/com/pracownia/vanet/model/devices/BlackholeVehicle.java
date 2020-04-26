@@ -1,7 +1,11 @@
 package com.pracownia.vanet.model.devices;
 
 import com.pracownia.vanet.model.event.Event;
+import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.road.Road;
+
+import java.util.Collection;
+import java.util.List;
 
 public class BlackholeVehicle extends Vehicle {
 
@@ -9,8 +13,9 @@ public class BlackholeVehicle extends Vehicle {
 
     /*------------------------ METHODS REGION ------------------------*/
 
-    public BlackholeVehicle(Road road, int id, double range, double speed) {
+    public BlackholeVehicle(Road road, int id, double range, double speed, Collection<Device> devices) {
         super(road, id, range, speed);
+        task = new Task(devices.stream().findFirst().get(), "Sieema", 1);
     }
 
     @Override
@@ -18,7 +23,7 @@ public class BlackholeVehicle extends Vehicle {
         if (receivedFrom == this ? !event.getRoutingPath().contains("->") : false) {
             getTask().done = true;
         }
-        System.out.println("Message ID " + event.getId() + " blocked by 8l4cKh0l3 ID " + this.getId());
+        System.out.println("Message ID " + event.getId() + " blocked by 8l4cKh0l3 ID " + getId());
         event.setId(-1);
         return event;
     }

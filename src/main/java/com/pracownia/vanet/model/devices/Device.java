@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,6 +23,7 @@ public abstract class Device {
     protected int id;
     protected Point currentLocation = new Point();
     protected double range;
+    protected UUID privateId = UUID.randomUUID();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {

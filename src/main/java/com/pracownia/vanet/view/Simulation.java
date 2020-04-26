@@ -39,20 +39,19 @@ import java.util.stream.Collectors;
 public class Simulation implements Runnable {
 
     private static final int START_POINTS_NUMBER = 5;
+
     /*------------------------ FIELDS REGION ------------------------*/
     private Boolean simulationRunning;
     private Thread tr;
     private MapRepresentation mapRepresentation;
-
-    AtomicInteger carCounter = new AtomicInteger(1);
-    Random random = new Random();
-
+    private AtomicInteger carCounter = new AtomicInteger(1);
+    private Random random = new Random();
     private List<Road> roads = new ArrayList<>();
     private List<CrossRoad> crossRoads = new ArrayList<>();
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
     private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
-
+    private List<UUID> trustedDevices = new ArrayList<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Simulation(Group scene) {
@@ -86,9 +85,11 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
+//        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 500.0), 100.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
+        devices.forEach(device -> this.trustedDevices.add(device.getPrivateId()));
     }
 
     private void buildCarAccidents() {
@@ -98,20 +99,25 @@ public class Simulation implements Runnable {
     }
 
     public List<Vehicle> addVehicles(int amount) {
+        int roadSidesNumber = (int) devices.stream().filter(device -> device instanceof RoadSide).count();
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
                     carCounter.getAndIncrement(),
                     getCarRange(),
                     randomizeSpeed()));
-            result.get(i).registerTask(new Task(devices.stream().findFirst().get(), "Sieema", 1));
+//            devices.stream().findFirst().get().getTrustedVehicles().add(result.get(i).getPrivateId());
+            this.trustedDevices.add(result.get(i).getPrivateId());
+            result.get(i).registerTask(new Task((Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Siema", 1));
         }
-        if (devices.size() > 0) {
-            result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 1));
-        }
+//        if (devices.size() > 0) {
+//            result.get(0).registerTask(new Task(devices.stream().anyMatch(device -> device.getId() == Math.abs(random.nextInt() % roadSidesNumber)), "Ala ma kota", 1));
+//        }
         synchronized (devices) {
             devices.addAll(result);
         }
+//        devices.stream().findFirst().get().addTrustedDevices(this.trustedDevices);
+
         return result;
     }
 
@@ -139,7 +145,8 @@ public class Simulation implements Runnable {
         Vehicle blackholeVehicle = new BlackholeVehicle(roads.get(0 % START_POINTS_NUMBER),
                 carCounter.getAndIncrement(),
                 getCarRange(),
-                randomizeSpeed());
+                randomizeSpeed(),
+                devices);
         synchronized (devices) {
             devices.add(blackholeVehicle);
         }

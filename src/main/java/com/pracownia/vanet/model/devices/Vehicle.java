@@ -11,37 +11,34 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
 public class Vehicle extends Device {
 
     /*------------------------ FIELDS REGION ------------------------*/
-    private int id;
-    private Road road;
-    private double speed;
-    private boolean direction = true; // True if from starting point to end point
-    private Date date;
+    protected int id;
+    protected Road road;
+    protected double speed;
+    protected boolean direction = true; // True if from starting point to end point
+    protected Date date;
     @Setter(AccessLevel.NONE)
-    private Point previousCrossing;
-    private Task task;
+    protected Point previousCrossing;
+    protected Task task;
 
-    public int getId() {
-        return this.id;
-    }
+//    public int getId() {
+//        return this.id;
+//    }
 
-    public Task getTask() {
-        return this.task;
-    }
+//    public Task getTask() {
+//        return this.task;
+//    }
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
-        road = new Road();
-        currentLocation = new Point();
+        this.road = new Road();
+        this.currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
