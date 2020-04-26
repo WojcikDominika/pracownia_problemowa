@@ -63,7 +63,7 @@ public class Simulation implements Runnable {
 
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Simulation( Group scene ) {
+    public Simulation(Group scene) {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
@@ -127,7 +127,7 @@ public class Simulation implements Runnable {
         }
     }
 
-    private Function<Device, Collection<Device>> observingProvider( ObservableList<Connection> tunneledDevices ) {
+    private Function<Device, Collection<Device>> observingProvider(ObservableList<Connection> tunneledDevices) {
         //TODO Refactor
         Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys()
                                                                                          .arrayListValues()
@@ -152,14 +152,14 @@ public class Simulation implements Runnable {
         return tunnels::get;
     }
 
-    private void drawDevices( Collection<Device> devices ) {
+    private void drawDevices(Collection<Device> devices) {
         for (Device device : devices) {
             DeviceRepresentation representation = mapRepresentation.getRepresentation(device);
             representation.move(device.getCurrentLocation());
         }
     }
 
-    private static void move( Collection<Device> devices, Collection<CrossRoad> crossRoads ) {
+    private static void move(Collection<Device> devices, Collection<CrossRoad> crossRoads) {
         synchronized (devices) {
             devices.stream()
                    .forEach(Device::move);
@@ -178,7 +178,7 @@ public class Simulation implements Runnable {
     }
 
 
-    private void drawNetworkConnections( Network dynamicNetwork ) {
+    private void drawNetworkConnections(Network dynamicNetwork) {
         Set<Connection> connectedPoints = new HashSet<>();
         synchronized (devices) {
             for (Device device : devices) {
@@ -196,7 +196,7 @@ public class Simulation implements Runnable {
     }
 
 
-    private void simulateCommunication( Network dynamicNetwork ) {
+    private void simulateCommunication(Network dynamicNetwork) {
         synchronized (devices) {
             for (Device device : devices) {
                 device.send(dynamicNetwork);
@@ -212,7 +212,7 @@ public class Simulation implements Runnable {
         mapRepresentation.switchRangeCircles(MapScheme.Range.ON);
     }
 
-    public void changeVehiclesRanges( double range ) {
+    public void changeVehiclesRanges(double range) {
         synchronized (devices) {
             for (Device device : devices) {
                 if (device instanceof Vehicle) {
@@ -224,7 +224,7 @@ public class Simulation implements Runnable {
         }
     }
 
-    public List<Vehicle> addVehicles( int amount ) {
+    public List<Vehicle> addVehicles(int amount) {
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),

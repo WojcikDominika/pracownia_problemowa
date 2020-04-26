@@ -21,14 +21,13 @@ public class Task {
         this.message = message;
         this.sendEverySeconds = sendEverySeconds;
         this.lastGenerated = Instant.now();
-        this.routingPath = "";
     }
 
-    public Optional<Event> prepareEvent(){
+    public Optional<Event> prepareEventFor(Device sender){
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
             lastGenerated = Instant.now();
-            return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, routingPath));
+            return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, String.valueOf(sender.getId())));
         } else{
             return Optional.empty();
         }

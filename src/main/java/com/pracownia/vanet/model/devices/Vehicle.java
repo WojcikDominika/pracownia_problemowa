@@ -84,19 +84,17 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void send( Network dynamicNetwork ) {
+    public void send(Network dynamicNetwork) {
         if (tasks.isEmpty()) {
             return;
         }
-        tasks.forEach(task1 ->
-                              task1.prepareEvent()
-                                   .ifPresent(event -> {
-                                       Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this,
-                                                                                                 event.getTarget());
-                                       event.setRoutingPath(String.valueOf(id));
-                                       route.ifPresent(r -> r.send(event));
-                                   }));
+        tasks.stream()
+             .map(task -> task.prepareEventFor(this))
+             .filter(Optional::isPresent)
+             .map(Optional::get)
+             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
     }
+
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
@@ -115,7 +113,7 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void registerTask( Task task ) {
+    public void registerTask(Task task) {
         this.tasks.add(task);
     }
 
