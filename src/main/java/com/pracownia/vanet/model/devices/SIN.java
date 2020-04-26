@@ -51,7 +51,11 @@ public class SIN extends Device {
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        return new Event();
+        if (!event.getRoutingPath().contains("->")) {
+            this.task.done = true;
+        }
+        event.setRoutingPath(event.getRoutingPath() + "->" + id);
+        return event;
     }
 
     @Override

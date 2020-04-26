@@ -84,7 +84,7 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 1000.0));
+        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 500.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
@@ -111,7 +111,7 @@ public class Simulation implements Runnable {
                     getCarRange(),
                     randomizeSpeed()));
             devices.stream().findFirst().get().asSIN().getTrustedDevices().add(result.get(i).getPrivateId().toString());
-            result.get(i).registerTask(new Task(devices.stream().findFirst().get() instanceof  SIN ?
+            result.get(i).registerTask(new Task(devices.stream().findFirst().get() instanceof SIN ?
                     (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber) + 1] :
                     (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Siema", 1));
         }
@@ -252,6 +252,7 @@ public class Simulation implements Runnable {
     private void simulateCommunication(Network dynamicNetwork) {
         synchronized (devices) {
             for (Device device : devices) {
+                System.out.println(device.toString());
                 device.send(dynamicNetwork);
             }
         }

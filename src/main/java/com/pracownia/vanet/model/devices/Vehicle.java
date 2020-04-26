@@ -22,7 +22,7 @@ public class Vehicle extends Device {
     protected Road road;
     protected double speed;
     protected boolean direction = true; // True if from starting point to end point
-    protected Date date;
+    protected Date date = new Date();
     @Setter(AccessLevel.NONE)
     protected Point previousCrossing;
     protected Task task;
@@ -125,7 +125,20 @@ public class Vehicle extends Device {
 
     @Override
     public String toString() {
-        return "ID:\t" + id;
+        return "Vehicle{" +
+                "id=" + id +
+                ", road=" + road +
+                ", speed=" + speed +
+                ", direction=" + direction +
+                ", date=" + date +
+                ", previousCrossing=" + previousCrossing +
+                ", task=" + task +
+                ", id=" + id +
+                ", currentLocation=" + currentLocation +
+                ", range=" + range +
+                ", privateId=" + privateId +
+                ", fakeDevices=" + fakeDevices +
+                '}';
     }
 
     @Override
