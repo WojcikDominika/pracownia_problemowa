@@ -51,6 +51,7 @@ public class Simulation implements Runnable {
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
     private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private Set<Integer> fakeDevicesIds = new HashSet<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Simulation(Group scene) {
@@ -84,12 +85,12 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 500.0));
+        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
         if (devices.stream().findFirst().get() instanceof  SIN) {
-            devices.stream().findFirst().get().registerTask(new Task("Kim jestes?", 1));
+            devices.stream().findFirst().get().registerTask(new Task("Kim jestes?", 5));
             devices.forEach(device -> {
                 devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId().toString());
             });
@@ -211,6 +212,11 @@ public class Simulation implements Runnable {
     private void drawDevices(Collection<Device> devices) {
         for (Device device : devices) {
             DeviceRepresentation representation = mapRepresentation.getRepresentation(device);
+            for (Integer id : this.fakeDevicesIds) {
+                if (device.getId() == id) {
+                    representation.setColor(Color.RED);
+                }
+            }
             representation.move(device.getCurrentLocation());
         }
     }
@@ -252,9 +258,11 @@ public class Simulation implements Runnable {
     private void simulateCommunication(Network dynamicNetwork) {
         synchronized (devices) {
             for (Device device : devices) {
-                System.out.println(device.toString());
                 device.send(dynamicNetwork);
             }
+        }
+        if (this.devices.stream().findFirst().get() instanceof SIN) {
+            this.fakeDevicesIds = this.devices.stream().findFirst().get().getFakeDevices();
         }
     }
 

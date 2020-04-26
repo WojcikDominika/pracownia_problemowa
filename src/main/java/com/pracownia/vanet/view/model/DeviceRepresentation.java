@@ -18,7 +18,7 @@ public class DeviceRepresentation extends Node implements Registerable {
     private static final double TEXT_SHIFT = 6.0;
     Circle deviceLocalisation;
     Circle deviceConnectionRange;
-    Text text;
+    public Text text;
 
     public DeviceRepresentation(Text text, Circle devicePointCircle, Circle deviceRange) {
         deviceLocalisation = devicePointCircle;

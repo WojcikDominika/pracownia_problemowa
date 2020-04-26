@@ -12,7 +12,11 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ShapeFactory {
+    private Set<DeviceRepresentation> deviceRepresentations = new HashSet<>();
 
     public DeviceRepresentation createDevice(Device device) {
         DeviceRepresentation deviceRepresentation = new DeviceRepresentation(label(device.getId()),
@@ -27,6 +31,9 @@ public class ShapeFactory {
         } else if (device instanceof CarAccident) {
             deviceRepresentation.setColor(Color.RED);
         }
+
+        this.deviceRepresentations.add(deviceRepresentation);
+
         return deviceRepresentation;
     }
 
