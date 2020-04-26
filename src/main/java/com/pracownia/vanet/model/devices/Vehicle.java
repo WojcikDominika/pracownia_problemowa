@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -29,15 +30,19 @@ public class Vehicle extends Device {
     private Date date;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private Task task;
+    private List<Task> tasks;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
+        this.tasks = new ArrayList<>();
+        this.occurrences = new AtomicInteger();
         road = new Road();
         currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
+        this.occurrences = new AtomicInteger();
+        this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
         this.range = range;
@@ -82,16 +87,18 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void send(Network dynamicNetwork) {
-        if (task == null) {
+    public void send( Network dynamicNetwork ) {
+        if (tasks.isEmpty()) {
             return;
         }
-
-        task.prepareEvent().ifPresent(event -> {
-            Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
-            event.setRoutingPath(String.valueOf(id));
-            route.ifPresent(r -> r.send(event));
-        });
+        tasks.forEach(task1 ->
+                              task1.prepareEvent()
+                                   .ifPresent(event -> {
+                                       Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this,
+                                                                                                 event.getTarget());
+                                       event.setRoutingPath(String.valueOf(id));
+                                       route.ifPresent(r -> r.send(event));
+                                   }));
     }
 
     @Override
@@ -111,8 +118,8 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void registerTask(Task task) {
-        this.task = task;
+    public void registerTask( Task task ) {
+        this.tasks.add(task);
     }
 
     @Override

@@ -105,11 +105,19 @@ public class Main extends Application {
             simulation.addWormholeVehicles();
         });
 
+        Button findHackers = new Button("Find Hackers");
+        findHackers.setLayoutX(1130.0);
+        findHackers.setLayoutY(300.00);
+        findHackers.setOnAction(e -> {
+            simulation.showHackers();
+        });
+
         Button addGreyholeVehicle = new Button("Add greyhole attack");
         addGreyholeVehicle.setLayoutX(1130.0);
         addGreyholeVehicle.setLayoutY(250.00);
         addGreyholeVehicle.setOnAction(e -> {
             simulation.addGreyholeVehicle();
+
         });
 
         // Vehicle informations.
@@ -194,6 +202,7 @@ public class Main extends Application {
                     vehiclesAmountField,
                     stopSimulation,
                     speedField,
+                    findHackers,
                     speedLabel,
                     vehIdField,
                     vehIdLabel,
@@ -210,7 +219,6 @@ public class Main extends Application {
                     rangeAmountLabel,
                     rangeAmountField,
                     changeRangeButton);
-
     }
 }
     
