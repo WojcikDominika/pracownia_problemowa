@@ -117,6 +117,8 @@ public class Vehicle extends Device {
         crossRoad.transportVehicle(this);
     }
 
+
+    //samohcody nie dziele saie dtas
     @Override
     public void registerTask( Task task ) {
         this.tasks.add(task);

@@ -104,6 +104,7 @@ public class Simulation implements Runnable {
                                                          .otherConnector(new TunnelConnector(observingProvider(tunneledDevices)))
                                                          .build();
 
+        //od nowa szuka najkrotszej dorgi do przekazania taska
         while (true) {
             if (simulationRunning) {
                 mapRepresentation.clearShortLiveObject();
@@ -233,6 +234,7 @@ public class Simulation implements Runnable {
         }
     }
 
+    //podczas dodawania wehicla dodawany jest task do vehicla
     public List<Vehicle> addVehicles( int amount ) {
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {

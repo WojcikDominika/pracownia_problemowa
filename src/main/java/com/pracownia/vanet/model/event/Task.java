@@ -16,7 +16,8 @@ public class Task {
     String message;
     String routingPath;
     boolean done = false;
-
+        //przesylanie wydarzen eventow, wiec on wysyla to w sekwencji czasu
+        //kazdy task ma poczatek i koniec
     public Task(Device target, String message, int sendEverySeconds) {
         this.target = target;
         this.message = message;
@@ -43,6 +44,7 @@ public class Task {
         }
     }*/
 
+    //przygotowanie wiadomosci ktora bedzie przesylana do targeta,
     public Optional<Event> prepareEvent() {
         if (!this.done) {
             Instant now = Instant.now();
