@@ -24,16 +24,18 @@ public class Vehicle extends Device {
     protected boolean direction = true; // True if from starting point to end point
     protected Date date = new Date();
     @Setter(AccessLevel.NONE)
-    protected Point previousCrossing;
-    protected Task task;
+    private Point previousCrossing;
+    private List<Task> tasks;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
-        this.road = new Road();
-        this.currentLocation = new Point();
+        this.tasks = new ArrayList<>();
+        road = new Road();
+        currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
+        this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
         this.range = range;
@@ -79,16 +81,23 @@ public class Vehicle extends Device {
 
     @Override
     public void send(Network dynamicNetwork) {
-        if (task == null) {
+        if (tasks.isEmpty()) {
             return;
         }
+        tasks.stream()
+             .map(task -> task.prepareEventFor(this))
+             .filter(Optional::isPresent)
+             .map(Optional::get)
+             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget())
+                                             .ifPresent(r -> r.send(event)));
+    }
 
-        task.prepareEvent(this).ifPresent(event -> {
+    task.prepareEvent(this).ifPresent(event -> {
             Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
             event.setRoutingPath(String.valueOf(id));
             route.ifPresent(r -> r.send(event));
         });
-    }
+
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
@@ -120,7 +129,7 @@ public class Vehicle extends Device {
 
     @Override
     public void registerTask(Task task) {
-        this.task = task;
+        this.tasks.add(task);
     }
 
     @Override
