@@ -22,6 +22,7 @@ public class Task {
         this.message = message;
         this.sendEverySeconds = sendEverySeconds;
         this.lastGenerated = Instant.now();
+        this.routingPath = "";
     }
 
     public Task(String message, int sendEverySeconds) {
@@ -36,16 +37,13 @@ public class Task {
         return this.done;
     }
 
-    public Optional<Event> prepareEvent(Device source) {
-        if (!this.done) {
-            Instant now = Instant.now();
-            if (Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds) {
-                lastGenerated = Instant.now();
-                return Optional.of(new Event(counter.getAndIncrement(), source, target, new Date(), message, routingPath));
-            } else {
-                return Optional.empty();
-            }
+    public Optional<Event> prepareEventFor(Device sender){
+        Instant now = Instant.now();
+        if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
+            lastGenerated = Instant.now();
+            return Optional.of(new Event(counter.getAndIncrement(), sender, target, new Date(), message, routingPath));
+        } else{
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 }

@@ -5,11 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.devices.RoadSide;
-import com.pracownia.vanet.model.devices.Vehicle;
-import com.pracownia.vanet.model.devices.WormholeVehicle;
-import com.pracownia.vanet.model.devices.BlackholeVehicle;
+import com.pracownia.vanet.model.devices.*;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Network;
@@ -25,6 +21,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -246,6 +243,7 @@ public class Simulation implements Runnable {
     }
 
     public List<Vehicle> addVehicles(int amount) {
+        int roadSidesNumber = (int) devices.stream().filter(device -> device instanceof RoadSide).count();
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),

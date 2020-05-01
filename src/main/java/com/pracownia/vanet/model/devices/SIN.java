@@ -38,7 +38,7 @@ public class SIN extends Device {
 
         dynamicNetwork.getConnectedDevices(this).forEach(device -> {
             if (device instanceof Vehicle) {
-                task.prepareEvent(this).ifPresent(event -> {
+                task.prepareEventFor(this).ifPresent(event -> {
                     event.setIdentityCheck(true);
                     event.setTarget(device);
                     Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());

@@ -23,9 +23,10 @@ public class Vehicle extends Device {
     protected double speed;
     protected boolean direction = true; // True if from starting point to end point
     protected Date date = new Date();
+    protected List<Task> tasks;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private List<Task> tasks;
+
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
@@ -92,17 +93,17 @@ public class Vehicle extends Device {
                                              .ifPresent(r -> r.send(event)));
     }
 
-    task.prepareEvent(this).ifPresent(event -> {
+    /*task.prepareEvent(this).ifPresent(event -> {
             Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this, event.getTarget());
             event.setRoutingPath(String.valueOf(id));
             route.ifPresent(r -> r.send(event));
-        });
+        });*/
 
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
         if (!event.getRoutingPath().contains("->")) {
-            this.task.done = true;
+            this.tasks.forEach(task -> task.done = true);
         }
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
         return event;
@@ -141,7 +142,7 @@ public class Vehicle extends Device {
                 ", direction=" + direction +
                 ", date=" + date +
                 ", previousCrossing=" + previousCrossing +
-                ", task=" + task +
+                ", task=" + tasks.toString() +
                 ", id=" + id +
                 ", currentLocation=" + currentLocation +
                 ", range=" + range +
