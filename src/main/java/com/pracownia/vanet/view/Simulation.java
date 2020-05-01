@@ -95,7 +95,7 @@ public class Simulation implements Runnable {
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
         if (devices.stream().findFirst().get() instanceof  SIN) {
-            devices.stream().findFirst().get().registerTask(new Task("Kim jestes?", 5));
+            devices.stream().findFirst().get().registerTask(new Task("SIN pyta: Kim jestes?", 5));
             devices.forEach(device -> {
                 devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId().toString());
             });

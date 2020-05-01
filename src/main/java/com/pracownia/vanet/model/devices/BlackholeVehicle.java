@@ -15,7 +15,7 @@ public class BlackholeVehicle extends Vehicle {
 
     public BlackholeVehicle(Road road, int id, double range, double speed, Collection<Device> devices) {
         super(road, id, range, speed);
-        tasks.add(new Task(devices.stream().findFirst().get(), "Sieema", 1));
+        tasks.add(new Task(devices.stream().findFirst().get(), "I'm Blackhole", 1));
     }
 
     @Override
@@ -23,7 +23,7 @@ public class BlackholeVehicle extends Vehicle {
         if (receivedFrom == this ? !event.getRoutingPath().contains("->") : false) {
             getTasks().forEach(task -> task.done = true);
         }
-        System.out.println("Message ID " + event.getId() + " blocked by 8l4cKh0l3 ID " + getId());
+        System.out.println("Message ID " + event.getId() + " blocked by Blackhole ID " + getId());
         event.setId(-1);
         return event;
     }

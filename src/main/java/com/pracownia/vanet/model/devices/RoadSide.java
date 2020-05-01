@@ -31,13 +31,13 @@ public class RoadSide extends Device {
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        event.setMessage(event.getMessage() + "rastafari " + id);
+        event.setMessage(event.getMessage() + "Transfering message from Roadside " + id);
         return event;
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message aaaaa Received: " + event.toString());
+        System.out.println("Roadside Received a Message: " + event.toString());
     }
 
     @Override

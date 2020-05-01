@@ -112,7 +112,7 @@ public class Vehicle extends Device {
     @Override
     public void receive(Event event) {
         if (event.ifIdentityCheck()) {
-            System.out.println("Message Received kurwa: " + event.toString());
+            System.out.println("Vehicle Received a Message: " + event.toString());
             event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), this.privateId.toString(), "" + id));
         }
 //        if (event.getSource() instanceof SIN && !event.ifIdentityCheck()) {

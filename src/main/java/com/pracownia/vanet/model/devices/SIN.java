@@ -62,7 +62,7 @@ public class SIN extends Device {
     public void receive (Event event) {
 //        this.trustedDevices.forEach(id -> System.out.println(id));
         if (!this.trustedDevices.contains(event.getMessage())) {
-            System.out.println("Blackhole detected!");
+            System.out.println("Blackhole detected by SIN!");
             this.fakeDevices.add(event.getSource().getId());
         }
 
