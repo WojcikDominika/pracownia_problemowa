@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents device and devices connected to it
+ */
 public class NetworkNode {
 
     Device device;

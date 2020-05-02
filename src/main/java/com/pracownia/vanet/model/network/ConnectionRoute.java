@@ -2,9 +2,11 @@ package com.pracownia.vanet.model.network;
 
 import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.event.Event;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manage sending event between devices which create connection route
+ */
 public class ConnectionRoute {
 
     /**

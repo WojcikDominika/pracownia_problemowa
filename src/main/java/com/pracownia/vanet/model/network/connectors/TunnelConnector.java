@@ -1,9 +1,6 @@
 package com.pracownia.vanet.model.network.connectors;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import com.pracownia.vanet.model.devices.Device;
-import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Connector;
 
 import java.util.Collection;

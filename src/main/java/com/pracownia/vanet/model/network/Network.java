@@ -6,6 +6,9 @@ import com.pracownia.vanet.model.devices.Device;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents devices and connections between them
+ */
 public class Network {
     Map<Device, NetworkNode> networkNodeByDevice;
 
@@ -17,7 +20,7 @@ public class Network {
         if(!networkNodeByDevice.containsKey(from) || !networkNodeByDevice.containsKey(to)){
             return Optional.empty();
         }
-        Optional<ImmutableRout> route = search(networkNodeByDevice.get(from), networkNodeByDevice.get(to));
+        Optional<ImmutableRoute> route = search(networkNodeByDevice.get(from), networkNodeByDevice.get(to));
         return route.map(r -> r.nodes.stream().map(NetworkNode::device).collect(Collectors.toList()))
                     .map(nodes -> new ConnectionRoute(nodes.subList(0, nodes.size()-1), to));
     }
@@ -33,13 +36,13 @@ public class Network {
                                   .collect(Collectors.toSet());
     }
 
-    private Optional<ImmutableRout> search(NetworkNode startNode, NetworkNode endpoint) {
+    private Optional<ImmutableRoute> search(NetworkNode startNode, NetworkNode endpoint) {
         Set<NetworkNode> alreadyVisited = new HashSet<>();
-        Queue<ImmutableRout> queue = new ArrayDeque<>();
-        queue.add(new ImmutableRout(startNode));
+        Queue<ImmutableRoute> queue = new ArrayDeque<>();
+        queue.add(new ImmutableRoute(startNode));
 
         while (!queue.isEmpty()) {
-            ImmutableRout currentRoute = queue.remove();
+            ImmutableRoute currentRoute = queue.remove();
             NetworkNode currentNode = currentRoute.getLast();
             if (currentNode.equals(endpoint)) {
                 return Optional.of(currentRoute);
@@ -54,23 +57,23 @@ public class Network {
         return Optional.empty();
     }
 
-    private static class ImmutableRout {
+    private static class ImmutableRoute {
         private List<NetworkNode> nodes;
 
-        public ImmutableRout(List<NetworkNode> nodes) {
+        public ImmutableRoute(List<NetworkNode> nodes) {
             this.nodes = nodes;
         }
 
-        public ImmutableRout(NetworkNode startNode) {
+        public ImmutableRoute(NetworkNode startNode) {
             this(new ArrayList<>());
             nodes.add(startNode);
         }
 
 
-        public ImmutableRout add(NetworkNode node){
+        public ImmutableRoute add(NetworkNode node){
             ArrayList<NetworkNode> copy = new ArrayList<>(nodes);
             copy.add(node);
-            return new ImmutableRout(copy);
+            return new ImmutableRoute(copy);
         }
 
         public NetworkNode getLast() {

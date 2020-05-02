@@ -11,6 +11,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
 
+/**
+ * Contains message that is sending to target device and information about pathway
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +21,6 @@ public class Event {
 
     /*------------------------ FIELDS REGION ------------------------*/
     private int id;
-    private EventType eventType;
     private Date eventDate;
     private String message;
     private String routingPath;

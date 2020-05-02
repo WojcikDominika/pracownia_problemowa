@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Vehicle represents cars that are part of the communicating nodes
+ */
 @Getter
 @Setter
 public class Vehicle extends Device {

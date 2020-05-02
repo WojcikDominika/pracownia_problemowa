@@ -6,6 +6,9 @@ import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 
+/**
+ * RoadSide represents roadside units (RTUs) that are part of the communicating nodes
+ */
 public class RoadSide extends Device {
 
     /*------------------------ FIELDS REGION ------------------------*/

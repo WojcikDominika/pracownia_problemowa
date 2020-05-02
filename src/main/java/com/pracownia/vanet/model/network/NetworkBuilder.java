@@ -29,7 +29,8 @@ public class NetworkBuilder {
                 .collect(Collectors.toMap(NetworkNode::device, Functions.identity()));
 
         for (Device device : devices) {
-            Set<Device> connected = connector.findConnections(device, Sets.difference(devices, Sets.newHashSet(device)));
+            Set<Device> otherDevices = Sets.difference(devices, Sets.newHashSet(device));
+            Set<Device> connected = connector.findConnections(device, otherDevices);
             List<NetworkNode> connectedNodes = connected.stream()
                     .map(networkNodeByDevice::get)
                     .collect(Collectors.toList());

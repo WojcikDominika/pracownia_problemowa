@@ -8,13 +8,15 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Menage the transmission of events between devices at specified times
+ */
 public class Task {
     private Instant lastGenerated;
     private final int sendEverySeconds;
     AtomicInteger counter = new AtomicInteger();
     Device target;
     String message;
-    String routingPath;
 
     public Task(Device target, String message, int sendEverySeconds) {
         this.target = target;

@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+/**
+ * Represents connection between two devices
+ */
 @Getter
 public class Connection {
 

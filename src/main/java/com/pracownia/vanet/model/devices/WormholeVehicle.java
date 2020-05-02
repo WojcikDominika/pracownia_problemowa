@@ -1,17 +1,11 @@
 package com.pracownia.vanet.model.devices;
 
-import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.event.Event;
-import com.pracownia.vanet.model.event.Task;
-import com.pracownia.vanet.model.network.ConnectionRoute;
-import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.Road;
-import lombok.AccessLevel;
-import lombok.Setter;
 
-import java.util.Date;
-import java.util.Optional;
-
+/**
+ * WormholeVehicle represents Wormhole attacking vehicles
+ */
 public class WormholeVehicle extends Vehicle {
 
 
@@ -28,6 +22,7 @@ public class WormholeVehicle extends Vehicle {
         event.setMessage("MESSAGE WAS HACKED!");
         event.setRoutingPath(event.getRoutingPath() + "->" + getId());
         return event;
+
     }
 
 }
