@@ -9,9 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
@@ -35,7 +33,7 @@ public abstract class Device {
 
     public abstract void move();
     public abstract void send(Network dynamicNetwork);
-    public abstract Event transfer(Event event, Device receivedFrom);
+    public abstract Optional<Event> transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
     public abstract void turn(CrossRoad crossRoad);
     public abstract void registerTask(Task task);

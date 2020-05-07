@@ -97,19 +97,19 @@ public class Vehicle extends Device {
                                        Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this,
                                                                                                  event.getTarget());
                                        event.setRoutingPath(String.valueOf(id));
-                                       route.ifPresent(r -> r.send(event));
+                                       route.ifPresent(r -> r.send(Optional.of(event)));
                                    }));
     }
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
-        return event;
+        return Optional.of(event);
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
+        System.out.println("I vehicle: " + this.id + "Message Received: " + event.toString());
     }
 
     @Override

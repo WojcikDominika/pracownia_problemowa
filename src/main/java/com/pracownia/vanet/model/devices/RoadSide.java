@@ -6,6 +6,8 @@ import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
 
+import java.util.Optional;
+
 public class RoadSide extends Device {
 
     /*------------------------ FIELDS REGION ------------------------*/
@@ -28,14 +30,14 @@ public class RoadSide extends Device {
     }
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setMessage(event.getMessage() + " " + id);
-        return event;
+        return Optional.of(event);
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
+        System.out.println("I RoadSide number: " + this.getId() + " received message: " + event.toString());
     }
 
     @Override

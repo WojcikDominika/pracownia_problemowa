@@ -5,6 +5,7 @@ import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.road.Road;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Random;
 
 public class GreyVehicle extends Vehicle {
@@ -12,24 +13,24 @@ public class GreyVehicle extends Vehicle {
     // procent "upuszczanych" pakietów
     private final double percent = 100;
 
-    public GreyVehicle(Road road, int id, double range, double speed, Collection<Device> devices) {
+    public GreyVehicle(Road road, int id, double range, double speed) {
         super(road, id, range, speed);
-        registerTask(new Task(devices.stream().findFirst().get(), "Woolooloo", 2));
     }
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
 
         Random generator = new Random();
         if(generator.nextInt(100) > percent)
             return super.transfer(event, receivedFrom);
         else {
-            if (receivedFrom == this && !event.getRoutingPath().contains("->")) {
-                getTask().setDone(true);
-            }
-            System.out.println("Message ID " + event.getId() + " blocked by gR3yI-I013 ID " + getId());
-            event.setId(-1);
-            return event;
+//            if (receivedFrom == this && !event.getRoutingPath().contains("->")) {
+//                System.out.println("1Message ID " + event.getId() + " dropped by gR3yI-I013 ID " + getId());
+//                return Optional.empty();
+//            }
+            System.out.println("2Message ID " + event.getId() +" , routing path: " +event.getRoutingPath() + " " +
+                    "dropped by gR3yI-I013 ID " + getId());
+            return Optional.empty();
         }
     }
 

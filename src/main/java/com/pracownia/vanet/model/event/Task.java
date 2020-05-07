@@ -30,6 +30,16 @@ public class Task {
         return this.done;
     }
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "target=" + target.getId() +
+                ", message='" + message + '\'' +
+                ", routingPath='" + routingPath + '\'' +
+                ", done=" + done +
+                '}';
+    }
+
     public void setDone(boolean done) {
         this.done = done;
     }
