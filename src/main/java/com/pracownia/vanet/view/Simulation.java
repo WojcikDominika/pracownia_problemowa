@@ -331,9 +331,7 @@ public class Simulation implements Runnable {
         Vehicle v1 = new GreyVehicle(roads.get(0 % START_POINTS_NUMBER),
                 carCounter.getAndIncrement(),
                 getCarRange(),
-                randomizeSpeed(),
-                devices
-        );
+                randomizeSpeed());
         synchronized (devices) {
             devices.add(v1);
         }
