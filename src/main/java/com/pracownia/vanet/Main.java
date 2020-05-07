@@ -112,6 +112,13 @@ public class Main extends Application {
             simulation.showHackers();
         });
 
+        Button findGreyHoles = new Button("Find grey holes");
+        findGreyHoles.setLayoutX(1130.0);
+        findGreyHoles.setLayoutY(350.00);
+        findGreyHoles.setOnAction(e -> {
+            simulation.showGreyHoles();
+        });
+
         Button addGreyholeVehicle = new Button("Add greyhole attack");
         addGreyholeVehicle.setLayoutX(1130.0);
         addGreyholeVehicle.setLayoutY(250.00);
@@ -203,6 +210,7 @@ public class Main extends Application {
                     stopSimulation,
                     speedField,
                     findHackers,
+                    findGreyHoles,
                     speedLabel,
                     vehIdField,
                     vehIdLabel,

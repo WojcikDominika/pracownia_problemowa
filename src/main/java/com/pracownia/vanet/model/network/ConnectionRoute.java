@@ -23,7 +23,7 @@ public class ConnectionRoute {
         this.destination = to;
     }
 
-
+    // To RoadSide
     public void send(Optional<Event> event) {
         route.get(0).incrementOccurrences();
         for (int i = 1; i < route.size(); i++) {
@@ -31,10 +31,11 @@ public class ConnectionRoute {
             device.incrementOccurrences();
             // Simulates sending for malicious event manipulation1
             if (event.isPresent()) {
+                device.incrementShouldTransfer();
                 event = device
                         .transfer(event.get(), route.get(i - 1));
             }
-
+            System.out.println("Id: " + device.getId() + "  ShouldTransfer: " + device.getShouldTransfer());
         }
         if (event.isPresent()) {
             destination.receive(event.get());

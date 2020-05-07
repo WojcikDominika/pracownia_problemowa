@@ -14,6 +14,7 @@ import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
 import com.pracownia.vanet.model.protection.SAMAnalysis;
+import com.pracownia.vanet.model.protection.SDBGHAlgorithm;
 import com.pracownia.vanet.model.road.CrossRoad;
 import com.pracownia.vanet.model.road.Road;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
@@ -27,15 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -160,6 +153,16 @@ public class Simulation implements Runnable {
 
         vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
                                                               .setColor(Color.HOTPINK));
+    }
+
+    public void showGreyHoles() {
+        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
+                .setColor(Color.BLACK));
+        SDBGHAlgorithm sdbghAlgorithm = new SDBGHAlgorithm(devices);
+        List<Device> vehiclesBiggerThan = sdbghAlgorithm.runAnalysis();
+
+        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
+                .setColor(Color.RED));
     }
 
     private void drawDevices( Collection<Device> devices ) {

@@ -1,7 +1,7 @@
 package com.pracownia.vanet.model.devices;
 
-import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.ConnectionRoute;
 import com.pracownia.vanet.model.network.Network;
@@ -42,6 +42,8 @@ public class Vehicle extends Device {
 
     public Vehicle(Road road, int id, double range, double speed) {
         this.occurrences = new AtomicInteger();
+        this.shouldTransfer = new AtomicInteger();
+        this.transferred = new AtomicInteger();
         this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
@@ -104,6 +106,8 @@ public class Vehicle extends Device {
     @Override
     public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
+        incrementTransferred();
+        System.out.println("Id: " + getId() + "  Transferred: " + getTransferred());
         return Optional.of(event);
     }
 

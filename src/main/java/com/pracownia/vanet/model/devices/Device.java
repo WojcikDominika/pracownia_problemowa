@@ -1,7 +1,7 @@
 package com.pracownia.vanet.model.devices;
 
-import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
@@ -22,10 +22,14 @@ public abstract class Device {
     protected Point currentLocation = new Point();
     protected double range;
     protected AtomicInteger occurrences;
+    protected AtomicInteger shouldTransfer;
+    protected AtomicInteger transferred;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {
-        occurrences = new AtomicInteger(0);
+        this.occurrences = new AtomicInteger(0);
+        this.shouldTransfer = new AtomicInteger(0);
+        this.transferred = new AtomicInteger(0);
         this.id = id;
         this.currentLocation = currentLocation;
         this.range = range;
@@ -40,8 +44,22 @@ public abstract class Device {
     public void incrementOccurrences() {
         this.occurrences.incrementAndGet();
     }
+    public void incrementShouldTransfer() {
+        this.shouldTransfer.incrementAndGet();
+    }
+    public void incrementTransferred() {
+        this.transferred.incrementAndGet();
+    }
     public AtomicInteger getOccurrences() {
         return occurrences;
+    }
+
+    public AtomicInteger getShouldTransfer() {
+        return shouldTransfer;
+    }
+
+    public AtomicInteger getTransferred() {
+        return transferred;
     }
 }
     
