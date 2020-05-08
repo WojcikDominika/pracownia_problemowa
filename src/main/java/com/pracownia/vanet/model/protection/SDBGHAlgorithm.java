@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class SDBGHAlgorithm {
     Collection<Device> devices;
-    private final double ratio = 0.732;
 
     public SDBGHAlgorithm(Collection<Device> devices) {
         this.devices = devices;
