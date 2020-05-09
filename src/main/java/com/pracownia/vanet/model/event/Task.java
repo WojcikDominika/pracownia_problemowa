@@ -41,7 +41,7 @@ public class Task {
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
             lastGenerated = Instant.now();
-            return Optional.of(new Event(counter.getAndIncrement(), sender, target, new Date(), message, routingPath));
+            return Optional.of(new Event(counter.getAndIncrement(), sender, target, new Date(), message, String.valueOf(sender.getId())));
         } else{
             return Optional.empty();
         }

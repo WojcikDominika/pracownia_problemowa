@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 @Setter
@@ -27,7 +26,6 @@ public class SIN extends Device {
 
     @Override
     public void move() {
-        //Does not move
     }
 
     @Override
@@ -60,30 +58,22 @@ public class SIN extends Device {
 
     @Override
     public void receive (Event event) {
-//        this.trustedDevices.forEach(id -> System.out.println(id));
         if (!this.trustedDevices.contains(event.getMessage())) {
             System.out.println("Blackhole detected by SIN!");
             this.fakeDevices.add(event.getSource().getId());
         }
 
         if (!this.fakeDevices.isEmpty()) {
-//            String fakeIds = "";
-//            for (Integer id : this.fakeDevices) {
-//                fakeIds += id + ",";
-//            }
-//            event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), fakeIds, "" + id));
             event.getSource().receiveFakeDevices(this.fakeDevices);
         }
     }
 
     @Override
     public void turn(CrossRoad crossRoad) {
-        //Does not move
     }
 
     @Override
     public void receiveFakeDevices(Set<Integer> fakeDevices) {
-        //Nothing
     }
 
     @Override

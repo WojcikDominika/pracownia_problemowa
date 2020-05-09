@@ -21,17 +21,15 @@ public class RoadSide extends Device {
 
     @Override
     public void move() {
-        //Does not move
     }
 
     @Override
     public void send(Network dynamicNetwork) {
-        // Nothing
     }
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        event.setMessage(event.getMessage() + "Transfering message from Roadside " + id);
+        event.setRoutingPath(event.getRoutingPath() + "->" + getId());
         return event;
     }
 
@@ -42,16 +40,13 @@ public class RoadSide extends Device {
 
     @Override
     public void turn(CrossRoad crossRoad) {
-        //Does not move
     }
 
     @Override
     public void registerTask(Task task) {
-        //TODO
     }
 
     @Override
     public void receiveFakeDevices(Set<Integer> fakeDevices) {
-        //Nothing
     }
 }

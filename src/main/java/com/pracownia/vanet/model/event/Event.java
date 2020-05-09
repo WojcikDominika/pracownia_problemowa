@@ -20,7 +20,7 @@ public class Event {
     private int id;
     private EventType eventType;
     private Date eventDate;
-    public String message;
+    private String message;
     private String routingPath;
     private Device source;
     private Device target;
