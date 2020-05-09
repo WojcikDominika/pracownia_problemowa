@@ -298,7 +298,7 @@ public class Simulation implements Runnable {
             devices.add(sin);
             Device dev = getSinFromDevices();
             if (dev != null) {
-                dev.registerTask(new Task(dev, "SIN pyta: Kim jestes?", 5));
+                dev.registerTask(new Task(dev, "SIN pyta: Kim jestes?", 1));
                 devices.forEach(device -> {
                     dev.asSIN().getTrustedDevices().add(device.getPrivateId().toString());
                 });
