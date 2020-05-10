@@ -42,6 +42,9 @@ public class Network {
             ImmutableRout currentRoute = queue.remove();
             NetworkNode currentNode = currentRoute.getLast();
             if (currentNode.equals(endpoint)) {
+                if (!(currentRoute.nodes().stream().filter(node -> startNode.device().fakeDevices.contains(node.device().getId())).count() > 0)) {
+                    return Optional.empty();
+                }
                 return Optional.of(currentRoute);
             } else {
                 alreadyVisited.add(currentNode);
