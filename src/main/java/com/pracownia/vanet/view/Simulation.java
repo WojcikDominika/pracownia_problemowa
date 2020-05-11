@@ -63,7 +63,6 @@ public class Simulation implements Runnable {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
-//        buildCarAccidents();
         mapRepresentation = new MapRepresentation(shapeFactory, scene);
         roads.forEach(mapRepresentation::getRepresentation);
     }
@@ -90,30 +89,18 @@ public class Simulation implements Runnable {
         crossRoads.add(new CrossRoad(new Point(800.0, 400.0), roads.get(3), roads.get(5)));
         crossRoads.add(new CrossRoad(new Point(800.0, 600.0), roads.get(3), roads.get(6)));
 
-        devices.add(new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 210.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(260.0, 610.0), 50.0));
         devices.add(new RoadSide(carCounter.getAndIncrement(), new Point(480.0, 610.0), 50.0));
-        if (devices.stream().findFirst().get() instanceof  SIN) {
-            devices.stream().findFirst().get().registerTask(new Task("SIN pyta: Kim jestes?", 5));
-            devices.forEach(device -> {
-                devices.stream().findFirst().get().asSIN().getTrustedDevices().add(device.getPrivateId().toString());
-            });
-        }
-    }
 
-    private void buildCarAccidents() {
-        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(250.0, 210.0), 20.0));
-        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(500.0, 410.0), 20.0));
-        devices.add(new CarAccident(carCounter.getAndIncrement(), new Point(750.0, 610.0), 20.0));
     }
 
     @Override
     public void run() {
         CompositeConnector connector = CompositeConnector.builder()
-                                                         .otherConnector(new DistanceBasedConnector())
-                                                         .otherConnector(new TunnelConnector(observingProvider(tunneledDevices)))
-                                                         .build();
+                .otherConnector(new DistanceBasedConnector())
+                .otherConnector(new TunnelConnector(observingProvider(tunneledDevices)))
+                .build();
 
         while (true) {
             if (simulationRunning) {
@@ -140,8 +127,8 @@ public class Simulation implements Runnable {
     private Function<Device, Collection<Device>> observingProvider(ObservableList<Connection> tunneledDevices) {
         //TODO Refactor
         Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys()
-                                                                                         .arrayListValues()
-                                                                                         .build());
+                .arrayListValues()
+                .build());
         synchronized (tunneledDevices) {
             tunneledDevices.forEach(deviceDevicePair -> {
                 tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
@@ -152,10 +139,10 @@ public class Simulation implements Runnable {
         tunneledDevices.addListener((ListChangeListener<? super Connection>) change -> {
             while (change.next()) {
                 change.getAddedSubList()
-                      .forEach(deviceDevicePair -> {
-                          tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
-                          tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
-                      });
+                        .forEach(deviceDevicePair -> {
+                            tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
+                            tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
+                        });
             }
         });
 
@@ -177,19 +164,19 @@ public class Simulation implements Runnable {
     private static void move(Collection<Device> devices, Collection<CrossRoad> crossRoads) {
         synchronized (devices) {
             devices.stream()
-                   .forEach(Device::move);
+                    .forEach(Device::move);
             for (Device device : devices) {
                 Optional<CrossRoad> nearestCrossRoad = crossRoads.parallelStream()
-                                                                 .map(cr -> Pair.of(cr,
-                                                                                    cr.getDistanceToCrossing(device)))
-                                                                 .min(Comparator.comparing(Pair::getValue))
-                                                                 .filter(pair -> pair.getValue() < CrossRoad.DETECTION_RANGE)
-                                                                 .map(Pair::getKey);
+                        .map(cr -> Pair.of(cr,
+                                cr.getDistanceToCrossing(device)))
+                        .min(Comparator.comparing(Pair::getValue))
+                        .filter(pair -> pair.getValue() < CrossRoad.DETECTION_RANGE)
+                        .map(Pair::getKey);
                 nearestCrossRoad.ifPresent(device::turn);
             }
         }
         crossRoads.parallelStream()
-                  .forEach(CrossRoad::resetLastTransportedVehicle);
+                .forEach(CrossRoad::resetLastTransportedVehicle);
     }
 
 
@@ -199,14 +186,14 @@ public class Simulation implements Runnable {
             for (Device device : devices) {
                 Set<Device> connectedDevices = dynamicNetwork.getConnectedDevices(device);
                 connectedPoints.addAll(connectedDevices.parallelStream()
-                                                       .map(d -> Connection.between(d, device))
-                                                       .collect(Collectors.toSet()));
+                        .map(d -> Connection.between(d, device))
+                        .collect(Collectors.toSet()));
             }
         }
 
         List<NetworkConnectionRepresentation> connectionsToDraw = connectedPoints.parallelStream()
-                                                                                 .map(shapeFactory::createNetworkConnection)
-                                                                                 .collect(Collectors.toList());
+                .map(shapeFactory::createNetworkConnection)
+                .collect(Collectors.toList());
         mapRepresentation.drawShortLived(connectionsToDraw);
     }
 
@@ -217,9 +204,10 @@ public class Simulation implements Runnable {
                 device.send(dynamicNetwork);
             }
         }
-        if (this.devices.stream().findFirst().get() instanceof SIN) {
-            this.fakeDevicesIds = this.devices.stream().findFirst().get().getFakeDevices();
-        }
+
+        Device dev = getSinFromDevices();
+        if (dev != null)
+            this.fakeDevicesIds = dev.getFakeDevices();
     }
 
     public void switchOffRangeCircles() {
@@ -236,7 +224,7 @@ public class Simulation implements Runnable {
                 if (device instanceof Vehicle) {
                     device.setRange(range);
                     mapRepresentation.getRepresentation(device)
-                                     .setConnectionRange(range);
+                            .setConnectionRange(range);
                 }
             }
         }
@@ -247,20 +235,22 @@ public class Simulation implements Runnable {
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
-                                   carCounter.getAndIncrement(),
-                                   getCarRange(),
-                                   randomizeSpeed()));
-            if (devices.stream().findFirst().get() instanceof SIN) {
-                devices.stream().findFirst().get().asSIN().getTrustedDevices().add(result.get(i).getPrivateId().toString());
-            }
+                    carCounter.getAndIncrement(),
+                    getCarRange(),
+                    randomizeSpeed()));
+            Device dev = getSinFromDevices();
+            if (dev != null)
+                dev.asSIN().getTrustedDevices().add(result.get(i).getPrivateId().toString());
         }
         if (devices.size() > 0) {
-            for (int i = 0; i < result.size(); i++) {
-                for (int j = 0; j < devices.size(); j++) {
-                    result.get(i)
-                          .registerTask(new Task(devices.stream().findFirst().get() instanceof SIN ?
-                                                (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber) + 1] :
-                                                (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber)], "Ala ma kota", 3));
+            Device dev = getSinFromDevices();
+            if (dev != null) {
+                for (int i = 0; i < result.size(); i++) {
+                    for (int j = 0; j < devices.size(); j++) {
+                        result.get(i)
+                                .registerTask(new Task(
+                                        (Device) devices.toArray()[Math.abs(this.random.nextInt() % roadSidesNumber) + 1], "Ala ma Kota", 3));
+                    }
                 }
             }
         }
@@ -272,13 +262,13 @@ public class Simulation implements Runnable {
 
     public List<Vehicle> addWormholeVehicles() {
         Vehicle v1 = new WormholeVehicle(roads.get(0 % START_POINTS_NUMBER),
-                                         carCounter.getAndIncrement(),
-                                         getCarRange(),
-                                         randomizeSpeed());
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
         Vehicle v2 = new WormholeVehicle(roads.get(1 % START_POINTS_NUMBER),
-                                         carCounter.getAndIncrement(),
-                                         getCarRange(),
-                                         randomizeSpeed());
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
 
         synchronized (devices) {
             devices.add(v1);
@@ -292,14 +282,31 @@ public class Simulation implements Runnable {
 
     public Vehicle addBlackholeVehicle() {
         Vehicle blackholeVehicle = new BlackholeVehicle(roads.get(0 % START_POINTS_NUMBER),
-                                                        carCounter.getAndIncrement(),
-                                                        getCarRange(),
-                                                        randomizeSpeed(),
-                                                        devices);
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed(),
+                devices);
         synchronized (devices) {
             devices.add(blackholeVehicle);
         }
         return blackholeVehicle;
+    }
+
+    public SIN addSIN() {
+        SIN sin = new SIN(carCounter.getAndIncrement(), new Point(500.0, 400.0), 50.0);
+        synchronized (devices) {
+            devices.add(sin);
+            Device dev = getSinFromDevices();
+            if (dev != null) {
+                dev.registerTask(new Task(dev, "SIN pyta: Kim jestes?", 1));
+                devices.forEach(device -> {
+                    dev.asSIN().getTrustedDevices().add(device.getPrivateId().toString());
+                });
+            }
+        }
+
+        return sin;
+
     }
 
     private double getCarRange() {
@@ -308,6 +315,15 @@ public class Simulation implements Runnable {
 
     private double randomizeSpeed() {
         return random.nextDouble() / 2.0 + 2;
+    }
+
+    private SIN getSinFromDevices() {
+        for (Device dev : devices) {
+            if (dev instanceof SIN) {
+                return (SIN) dev;
+            }
+        }
+        return null;
     }
 
 }
