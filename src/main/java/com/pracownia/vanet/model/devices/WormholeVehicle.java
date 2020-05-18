@@ -24,7 +24,3 @@ public class WormholeVehicle extends Vehicle {
     }
 
 }
-
-// kazdy chce wysla network szuka najkroteszej drogi do
-// komunikacji transfer miedzy soba, send jako pierwszy
-// ktprys 1 ma zadanie ze chce wysac do 5 wiec wysyla przez najkrotsza droga

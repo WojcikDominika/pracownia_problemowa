@@ -122,7 +122,6 @@ public class Vehicle extends Device {
     }
 
 
-    //samohcody nie dziele saie dtas
     @Override
     public void registerTask( Task task ) {
         this.tasks.add(task);

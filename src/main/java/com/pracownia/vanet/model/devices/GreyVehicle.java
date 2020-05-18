@@ -22,10 +22,6 @@ public class GreyVehicle extends Vehicle {
         if(generator.nextInt(100) > percent)
             return super.transfer(event, receivedFrom);
         else {
-//            if (receivedFrom == this && !event.getRoutingPath().contains("->")) {
-//                System.out.println("1Message ID " + event.getId() + " dropped by gR3yI-I013 ID " + getId());
-//                return Optional.empty();
-//            }
             System.out.println("Message ID " + event.getId() +" , routing path: " +event.getRoutingPath() + " " +
                     "dropped by gR3yI-I013 ID " + getId());
             return Optional.empty();

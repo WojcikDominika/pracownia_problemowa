@@ -32,13 +32,12 @@ public class RoadSide extends Device {
     @Override
     public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
-        //event.setMessage(event.getMessage() + " " + id);
         return Optional.of(event);
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("I RoadSide number: " + this.getId() + " received message: " + event.toString());
+        System.out.println("RoadSide number: " + this.getId() + " received message: " + event.toString());
     }
 
     @Override

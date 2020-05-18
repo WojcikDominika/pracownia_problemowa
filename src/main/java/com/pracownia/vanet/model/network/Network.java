@@ -7,7 +7,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-//szuka najkrotszego polaczenia i przekazuje
 public class Network {
     Map<Device, NetworkNode> networkNodeByDevice;
 

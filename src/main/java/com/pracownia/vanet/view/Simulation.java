@@ -97,7 +97,6 @@ public class Simulation implements Runnable {
                                                          .otherConnector(new TunnelConnector(observingProvider(tunneledDevices)))
                                                          .build();
 
-        //od nowa szuka najkrotszej dorgi do przekazania taska
         while (true) {
             if (simulationRunning) {
                 mapRepresentation.clearShortLiveObject();
@@ -247,68 +246,19 @@ public class Simulation implements Runnable {
                     randomizeSpeed()));
         }
 
-
         if (devices.size() > 0) {
             devices.stream().forEach(d -> {
                 if (d instanceof RoadSide)
                     result.get(0).registerTask(new Task(d, "Ala ma kota", 2));
             });
         }
-
-//        if (devices.size() > 0) {
-//            for (int i = 0; i< devices.size(); i++){
-//                result.get(0).registerTask(new Task(devices.stream().findFirst().get(), "Ala ma kota", 2));
-//            }
-//        }
         synchronized (devices) {
             devices.addAll(result);
         }
 
-
-
-        System.out.println("Sout kingi");
-        for(int i = 0; i < result.size(); i++){
-            for (int j = 0; j < result.get(i).getTasks().size(); j++){
-                System.out.println(result.get(i).getTasks().get(j).toString());
-            }
-        }
         return result;
     }
 
-    //podczas dodawania wehicla dodawany jest task do vehicla
-//    public List<Vehicle> addVehicles( int amount ) {
-//        List<Vehicle> result = new ArrayList<>();
-//        for (int i = 0; i < amount; i++) {
-//            result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
-//                                   carCounter.getAndIncrement(),
-//                                   getCarRange(),
-//                                   randomizeSpeed()));
-//        }
-//        if (devices.size() > 0) {
-//            for (int i = 0; i < result.size(); i++) {
-//                for (int j = 0; j < devices.size(); j++) {
-////                    kazdy vehicle dosaje taska z wiadomoscia i ma ustawiane ze ma przekazac go do RoadSide
-//                    result.get(i)
-//                          .registerTask(new Task(devices.stream()
-//                                                        .skip(j)
-//                                                        .findFirst()
-//                                                        .get(), "Ala ma kota", 3));
-//                }
-//            }
-//        }
-//        synchronized (devices) {
-//            devices.addAll(result);
-//        }
-//        System.out.println("Sout kingi");
-//        for(int i = 0; i < result.size(); i++){
-//            for (int j = 0; j < result.get(i).getTasks().size(); j++){
-//                System.out.println(result.get(i).getTasks().get(j).toString());
-//            }
-//        }
-//
-//        devices.stream().forEach(d -> System.out.println("jestem devicem z id: " + d.getId() + " i jestem klasy: " + d.getClass()));
-//        return result;
-//    }
 
     public List<Vehicle> addWormholeVehicles() {
         Vehicle v1 = new WormholeVehicle(roads.get(0 % START_POINTS_NUMBER),
