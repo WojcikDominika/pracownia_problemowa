@@ -2,6 +2,7 @@ package com.pracownia.vanet.model.network;
 
 import com.google.common.collect.Iterables;
 import com.pracownia.vanet.model.devices.Device;
+import com.pracownia.vanet.model.devices.SIN;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class Network {
             ImmutableRout currentRoute = queue.remove();
             NetworkNode currentNode = currentRoute.getLast();
             if (currentNode.equals(endpoint)) {
-                if (!(currentRoute.nodes().stream().filter(node -> startNode.device().fakeDevices.contains(node.device().getId())).count() > 0)) {
+                if (!(startNode.device() instanceof SIN) && isFakeDevice(startNode.device().getFakeDevices(), currentRoute.nodes()  )) {
                     return Optional.empty();
                 }
                 return Optional.of(currentRoute);
@@ -55,6 +56,15 @@ public class Network {
             }
         }
         return Optional.empty();
+    }
+
+    private boolean isFakeDevice(Set<Integer> fakeDevices, List<NetworkNode> nodes) {
+        for(NetworkNode node: nodes) {
+            if (fakeDevices.contains(node.device().getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class ImmutableRout {
