@@ -1,7 +1,7 @@
 package com.pracownia.vanet.model.devices;
 
-import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.Point;
+import com.pracownia.vanet.model.event.Event;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.ConnectionRoute;
 import com.pracownia.vanet.model.network.Network;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class Vehicle extends Device {
     private Date date;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private Task task;
+    private List<Task> tasks;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
@@ -88,15 +89,18 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void send(Network dynamicNetwork) {
+    public void send( Network dynamicNetwork ) {
         if (tasks.isEmpty()) {
             return;
         }
-        tasks.stream()
-             .map(task -> task.prepareEventFor(this))
-             .filter(Optional::isPresent)
-             .map(Optional::get)
-             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
+        tasks.forEach(task1 ->
+                              task1.prepareEvent()
+                                   .ifPresent(event -> {
+                                       Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this,
+                                                                                                 event.getTarget());
+                                       event.setRoutingPath(String.valueOf(id));
+                                       route.ifPresent(r -> r.send(Optional.of(event)));
+                                   }));
     }
 
     @Override
@@ -109,7 +113,7 @@ public class Vehicle extends Device {
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
+        System.out.println("I vehicle: " + this.id + "Message Received: " + event.toString());
     }
 
     @Override
@@ -117,8 +121,9 @@ public class Vehicle extends Device {
         crossRoad.transportVehicle(this);
     }
 
+
     @Override
-    public void registerTask(Task task) {
+    public void registerTask( Task task ) {
         this.tasks.add(task);
     }
 
