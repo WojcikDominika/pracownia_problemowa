@@ -5,7 +5,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.pracownia.vanet.model.Point;
-import com.pracownia.vanet.model.devices.*;
+import com.pracownia.vanet.model.devices.Device;
+import com.pracownia.vanet.model.devices.RoadSide;
+import com.pracownia.vanet.model.devices.Vehicle;
+import com.pracownia.vanet.model.devices.WormholeVehicle;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.model.network.Network;
@@ -13,12 +16,14 @@ import com.pracownia.vanet.model.network.NetworkBuilder;
 import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
-import com.pracownia.vanet.model.protection.SAMAnalysis;
-import com.pracownia.vanet.model.protection.SDBGHAlgorithm;
 import com.pracownia.vanet.model.road.CrossRoad;
+import com.pracownia.vanet.model.devices.Vehicle;
+import com.pracownia.vanet.model.devices.RoadSide;
 import com.pracownia.vanet.model.road.Road;
+import com.pracownia.vanet.model.network.Connection;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
 import com.pracownia.vanet.view.model.NetworkConnectionRepresentation;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -50,12 +55,11 @@ public class Simulation implements Runnable {
     private List<CrossRoad> crossRoads = new ArrayList<>();
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
-    private ObservableList<Connection> tunneledDevices =
-            FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Simulation( Group scene ) {
+    public Simulation(Group scene) {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
@@ -119,11 +123,9 @@ public class Simulation implements Runnable {
         }
     }
 
-    private Function<Device, Collection<Device>> observingProvider( ObservableList<Connection> tunneledDevices ) {
+    private Function<Device, Collection<Device>> observingProvider(ObservableList<Connection> tunneledDevices) {
         //TODO Refactor
-        Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys()
-                                                                                         .arrayListValues()
-                                                                                         .build());
+        Multimap<Device, Device> tunnels = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys().arrayListValues().build());
         synchronized (tunneledDevices) {
             tunneledDevices.forEach(deviceDevicePair -> {
                 tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
@@ -133,64 +135,40 @@ public class Simulation implements Runnable {
 
         tunneledDevices.addListener((ListChangeListener<? super Connection>) change -> {
             while (change.next()) {
-                change.getAddedSubList()
-                      .forEach(deviceDevicePair -> {
-                          tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
-                          tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
-                      });
+                change.getAddedSubList().forEach(deviceDevicePair -> {
+                    tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
+                    tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
+                });
             }
         });
 
         return tunnels::get;
     }
 
-    public void showHackers() {
-        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
-                                                        .setColor(Color.BLACK));
-        SAMAnalysis samAnalysis = new SAMAnalysis(devices);
-        List<Device> vehiclesBiggerThan = samAnalysis.runAnalysis();
-
-        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
-                                                              .setColor(Color.HOTPINK));
-    }
-
-    public void showGreyHoles() {
-        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
-                .setColor(Color.BLACK));
-        SDBGHAlgorithm sdbghAlgorithm = new SDBGHAlgorithm(devices);
-        List<Device> vehiclesBiggerThan = sdbghAlgorithm.runAnalysis();
-
-        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
-                .setColor(Color.RED));
-    }
-
-    private void drawDevices( Collection<Device> devices ) {
+    private void drawDevices(Collection<Device> devices) {
         for (Device device : devices) {
             DeviceRepresentation representation = mapRepresentation.getRepresentation(device);
             representation.move(device.getCurrentLocation());
         }
     }
 
-    private static void move( Collection<Device> devices, Collection<CrossRoad> crossRoads ) {
+    private static void move(Collection<Device> devices, Collection<CrossRoad> crossRoads) {
         synchronized (devices) {
-            devices.stream()
-                   .forEach(Device::move);
+            devices.stream().forEach(Device::move);
             for (Device device : devices) {
                 Optional<CrossRoad> nearestCrossRoad = crossRoads.parallelStream()
-                                                                 .map(cr -> Pair.of(cr,
-                                                                                    cr.getDistanceToCrossing(device)))
+                                                                 .map(cr -> Pair.of(cr, cr.getDistanceToCrossing(device)))
                                                                  .min(Comparator.comparing(Pair::getValue))
                                                                  .filter(pair -> pair.getValue() < CrossRoad.DETECTION_RANGE)
                                                                  .map(Pair::getKey);
                 nearestCrossRoad.ifPresent(device::turn);
             }
         }
-        crossRoads.parallelStream()
-                  .forEach(CrossRoad::resetLastTransportedVehicle);
+        crossRoads.parallelStream().forEach(CrossRoad::resetLastTransportedVehicle);
     }
 
 
-    private void drawNetworkConnections( Network dynamicNetwork ) {
+    private void drawNetworkConnections(Network dynamicNetwork) {
         Set<Connection> connectedPoints = new HashSet<>();
         synchronized (devices) {
             for (Device device : devices) {
@@ -208,7 +186,7 @@ public class Simulation implements Runnable {
     }
 
 
-    private void simulateCommunication( Network dynamicNetwork ) {
+    private void simulateCommunication(Network dynamicNetwork) {
         synchronized (devices) {
             for (Device device : devices) {
                 device.send(dynamicNetwork);
@@ -224,28 +202,25 @@ public class Simulation implements Runnable {
         mapRepresentation.switchRangeCircles(MapScheme.Range.ON);
     }
 
-    public void changeVehiclesRanges( double range ) {
+    public void changeVehiclesRanges(double range) {
         synchronized (devices) {
             for (Device device : devices) {
                 if (device instanceof Vehicle) {
                     device.setRange(range);
-                    mapRepresentation.getRepresentation(device)
-                                     .setConnectionRange(range);
+                    mapRepresentation.getRepresentation(device).setConnectionRange(range);
                 }
             }
         }
     }
 
-
     public List<Vehicle> addVehicles(int amount) {
         List<Vehicle> result = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             result.add(new Vehicle(roads.get(i % START_POINTS_NUMBER),
-                    carCounter.getAndIncrement(),
-                    getCarRange(),
-                    randomizeSpeed()));
+                                   carCounter.getAndIncrement(),
+                                   getCarRange(),
+                                   randomizeSpeed()));
         }
-
         if (devices.size() > 0) {
             devices.stream().forEach(d -> {
                 if (d instanceof RoadSide)
@@ -255,10 +230,8 @@ public class Simulation implements Runnable {
         synchronized (devices) {
             devices.addAll(result);
         }
-
         return result;
     }
-
 
     public List<Vehicle> addWormholeVehicles() {
         Vehicle v1 = new WormholeVehicle(roads.get(0 % START_POINTS_NUMBER),
@@ -280,23 +253,12 @@ public class Simulation implements Runnable {
         return Lists.newArrayList(v1, v2);
     }
 
-    public List<Vehicle> addGreyholeVehicle() {
-        Vehicle v1 = new GreyVehicle(roads.get(0 % START_POINTS_NUMBER),
-                carCounter.getAndIncrement(),
-                getCarRange(),
-                randomizeSpeed());
-        synchronized (devices) {
-            devices.add(v1);
-        }
-        return Lists.newArrayList(v1);
-    }
-
     private double getCarRange() {
         return 40.0;
     }
 
     private double randomizeSpeed() {
-        return random.nextDouble()*7 / 2.0 + 2;
+        return random.nextDouble() / 2.0 + 2;
     }
 
 }
