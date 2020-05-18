@@ -25,14 +25,6 @@ public class Task {
         this.routingPath = "";
     }
 
-    public Task(String message, int sendEverySeconds) {
-        this.target = null;
-        this.message = message;
-        this.sendEverySeconds = sendEverySeconds;
-        this.lastGenerated = Instant.now();
-        this.routingPath = "";
-    }
-
     public boolean ifDone() {
         return this.done;
     }

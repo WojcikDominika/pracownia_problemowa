@@ -96,8 +96,8 @@ public class Vehicle extends Device {
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
-        if (!event.getRoutingPath().contains("->")) {
-            this.tasks.forEach(task -> task.done = true);
+        if (event.getRoutingPath().split("->").length > 1) {
+            //this.tasks.forEach(task -> task.done = true);
         }
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
         return event;

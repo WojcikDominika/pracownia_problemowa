@@ -118,6 +118,13 @@ public class Main extends Application {
             simulation.addBlackholeVehicle();
         });
 
+        Button addSIN = new Button("Add SIN DEFENDER");
+        addSIN.setLayoutX(1200.0);
+        addSIN.setLayoutY(300.0);
+        addSIN.setOnAction(e -> {
+            simulation.addSIN();
+        });
+
         // Vehicle informations.
         this.speedField = new TextField();
         speedField.setLayoutX(950.0);
@@ -215,6 +222,7 @@ public class Main extends Application {
                     vehiclesAmountLabel,
                     rangeAmountLabel,
                     rangeAmountField,
+                    addSIN,
                     changeRangeButton);
 
     }
