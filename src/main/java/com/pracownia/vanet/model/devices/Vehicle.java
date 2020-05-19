@@ -11,10 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,11 +22,11 @@ public class Vehicle extends Device {
     private Road road;
     private double speed;
     private boolean direction = true; // True if from starting point to end point
-
-    private Date date;
+    private Date date = new Date();
+    protected List<Task> tasks;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private List<Task> tasks;
+
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
@@ -92,19 +89,26 @@ public class Vehicle extends Device {
              .map(task -> task.prepareEventFor(this))
              .filter(Optional::isPresent)
              .map(Optional::get)
-             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget()).ifPresent(r -> r.send(event)));
+             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget())
+                                             .ifPresent(r -> r.send(event)));
     }
 
 
     @Override
     public Event transfer(Event event, Device receivedFrom) {
+        if (event.getRoutingPath().split("->").length > 1) {
+            //this.tasks.forEach(task -> task.done = true);
+        }
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
         return event;
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
+        if (event.ifIdentityCheck()) {
+            System.out.println("Vehicle Received a Message: " + event.toString());
+            event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), this.privateId.toString(), "" + id));
+        }
     }
 
     @Override
@@ -119,7 +123,25 @@ public class Vehicle extends Device {
 
     @Override
     public String toString() {
-        return "ID:\t" + id;
+        return "Vehicle{" +
+                "id=" + id +
+                ", road=" + road +
+                ", speed=" + speed +
+                ", direction=" + direction +
+                ", date=" + date +
+                ", previousCrossing=" + previousCrossing +
+                ", task=" + tasks.toString() +
+                ", id=" + id +
+                ", currentLocation=" + currentLocation +
+                ", range=" + range +
+                ", privateId=" + privateId +
+                ", fakeDevices=" + fakeDevices +
+                '}';
+    }
+
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        this.fakeDevices.addAll(fakeDevices);
     }
 }
     

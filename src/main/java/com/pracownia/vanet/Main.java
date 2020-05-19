@@ -105,10 +105,24 @@ public class Main extends Application {
         });
 
         Button addWormholeVehicle = new Button("Add wormhole attack");
-        addWormholeVehicle.setLayoutX(1130.0);
+        addWormholeVehicle.setLayoutX(1200.0);
         addWormholeVehicle.setLayoutY(200.00);
         addWormholeVehicle.setOnAction(e -> {
             simulation.addWormholeVehicles();
+        });
+
+        Button addBlackholeVehicle = new Button("Add blackhole attack");
+        addBlackholeVehicle.setLayoutX(1200.0);
+        addBlackholeVehicle.setLayoutY(250.0);
+        addBlackholeVehicle.setOnAction(e -> {
+            simulation.addBlackholeVehicle();
+        });
+
+        Button addSIN = new Button("Add SIN DEFENDER");
+        addSIN.setLayoutX(1200.0);
+        addSIN.setLayoutY(300.0);
+        addSIN.setOnAction(e -> {
+            simulation.addSIN();
         });
 
         // Vehicle informations.
@@ -204,9 +218,11 @@ public class Main extends Application {
                     connVehLabel,
                     startSimulation,
                     addWormholeVehicle,
+                    addBlackholeVehicle,
                     vehiclesAmountLabel,
                     rangeAmountLabel,
                     rangeAmountField,
+                    addSIN,
                     changeRangeButton);
 
     }

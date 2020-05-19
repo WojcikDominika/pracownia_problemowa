@@ -11,23 +11,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Task {
     private Instant lastGenerated;
     private final int sendEverySeconds;
-    AtomicInteger counter = new AtomicInteger();
-    Device target;
-    String message;
-    String routingPath;
+    private AtomicInteger counter = new AtomicInteger();
+    private Device target;
+    private String message;
+    private String routingPath;
+    public boolean done = false;
 
     public Task(Device target, String message, int sendEverySeconds) {
         this.target = target;
         this.message = message;
         this.sendEverySeconds = sendEverySeconds;
         this.lastGenerated = Instant.now();
+        this.routingPath = "";
+    }
+
+    public boolean ifDone() {
+        return this.done;
     }
 
     public Optional<Event> prepareEventFor(Device sender){
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){
             lastGenerated = Instant.now();
-            return Optional.of(new Event(counter.getAndIncrement(), target, new Date(), message, String.valueOf(sender.getId())));
+            return Optional.of(new Event(counter.getAndIncrement(), sender, target, new Date(), message, String.valueOf(sender.getId())));
         } else{
             return Optional.empty();
         }

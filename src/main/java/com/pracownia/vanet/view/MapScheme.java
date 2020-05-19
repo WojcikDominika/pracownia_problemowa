@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class MapScheme {
-    public enum Range{
+    public enum Range {
         ON(Color.BLACK),
         OFF(Color.TRANSPARENT);
 
