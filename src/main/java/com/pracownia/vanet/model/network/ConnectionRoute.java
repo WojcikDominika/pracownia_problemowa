@@ -2,7 +2,7 @@ package com.pracownia.vanet.model.network;
 
 import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.event.Event;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +25,10 @@ public class ConnectionRoute {
 
     // To RoadSide
     public void send(Optional<Event> event) {
+        if (event.get().ifIdentityCheck() && event.isPresent()) {
+            event.get().getTarget().receive(event.get());
+            return;
+        }
         route.get(0).incrementOccurrences();
         for (int i = 1; i < route.size(); i++) {
             Device device = route.get(i);

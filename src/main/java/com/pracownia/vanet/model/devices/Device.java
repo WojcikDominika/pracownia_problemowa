@@ -1,7 +1,7 @@
 package com.pracownia.vanet.model.devices;
 
-import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.event.Event;
+import com.pracownia.vanet.model.Point;
 import com.pracownia.vanet.model.event.Task;
 import com.pracownia.vanet.model.network.Network;
 import com.pracownia.vanet.model.road.CrossRoad;
@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 @Getter
 @Setter
@@ -24,6 +25,8 @@ public abstract class Device {
     protected AtomicInteger occurrences;
     protected AtomicInteger shouldTransfer;
     protected AtomicInteger transferred;
+    protected UUID privateId = UUID.randomUUID();
+    protected Set<Integer> fakeDevices = new HashSet<>();
 
     /*------------------------ METHODS REGION ------------------------*/
     public Device(int id, Point currentLocation, double range) {
@@ -40,6 +43,7 @@ public abstract class Device {
     public abstract Optional<Event> transfer(Event event, Device receivedFrom);
     public abstract void receive(Event event);
     public abstract void turn(CrossRoad crossRoad);
+    public abstract void receiveFakeDevices(Set<Integer> fakeDevices);
     public abstract void registerTask(Task task);
     public void incrementOccurrences() {
         this.occurrences.incrementAndGet();
@@ -60,6 +64,9 @@ public abstract class Device {
 
     public AtomicInteger getTransferred() {
         return transferred;
+    }
+    public SIN asSIN() {
+        return (SIN) this;
     }
 }
     

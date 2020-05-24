@@ -21,20 +21,26 @@ public class Event {
     private Date eventDate;
     private String message;
     private String routingPath;
+    private Device source;
+    private Device target;
+    private boolean identityCheck = false;
 
     public Device getTarget() {
         return target;
     }
 
-    private Device target;
-
     /*------------------------ METHODS REGION ------------------------*/
-    public Event(int id, Device target, Date eventDate, String message, String routingPath) {
+    public Event(int id, Device source, Device target, Date eventDate, String message, String routingPath) {
         this.id = id;
+        this.source = source;
         this.target = target;
         this.eventDate = eventDate;
         this.message = message;
         this.routingPath = routingPath;
+    }
+
+    public boolean ifIdentityCheck() {
+        return this.identityCheck;
     }
 
     @Override

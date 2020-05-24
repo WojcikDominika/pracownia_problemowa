@@ -3,12 +3,18 @@ package com.pracownia.vanet;
 import com.pracownia.vanet.view.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.Getter;
@@ -107,7 +113,7 @@ public class Main extends Application {
 
         Button findHackers = new Button("Find Hackers");
         findHackers.setLayoutX(1130.0);
-        findHackers.setLayoutY(300.00);
+        findHackers.setLayoutY(4500.00);
         findHackers.setOnAction(e -> {
             simulation.showHackers();
         });
@@ -127,6 +133,19 @@ public class Main extends Application {
 
         });
 
+        Button addBlackholeVehicle = new Button("Add blackhole attack");
+        addBlackholeVehicle.setLayoutX(1130.0);
+        addBlackholeVehicle.setLayoutY(300.0);
+        addBlackholeVehicle.setOnAction(e -> {
+            simulation.addBlackholeVehicle();
+        });
+
+        Button addSIN = new Button("Add SIN DEFENDER");
+        addSIN.setLayoutX(1130.0);
+        addSIN.setLayoutY(400.0);
+        addSIN.setOnAction(e -> {
+            simulation.addSIN();
+        });
         // Vehicle informations.
         this.speedField = new TextField();
         speedField.setLayoutX(950.0);
@@ -208,9 +227,9 @@ public class Main extends Application {
                     spawnVehiclesButton,
                     vehiclesAmountField,
                     stopSimulation,
-                    speedField,
                     findHackers,
                     findGreyHoles,
+                    speedField,
                     speedLabel,
                     vehIdField,
                     vehIdLabel,
@@ -223,10 +242,14 @@ public class Main extends Application {
                     startSimulation,
                     addWormholeVehicle,
                     addGreyholeVehicle,
+                    addBlackholeVehicle,
                     vehiclesAmountLabel,
                     rangeAmountLabel,
                     rangeAmountField,
+                    addSIN,
                     changeRangeButton);
+
+
     }
 }
     
