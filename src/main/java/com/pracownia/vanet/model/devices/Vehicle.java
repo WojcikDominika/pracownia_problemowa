@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
@@ -26,11 +27,10 @@ public class Vehicle extends Device {
     private Road road;
     private double speed;
     private boolean direction = true; // True if from starting point to end point
-
-    private Date date;
+    private Date date = new Date();
+    protected List<Task> tasks;
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
-    private List<Task> tasks;
 
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
@@ -42,6 +42,8 @@ public class Vehicle extends Device {
 
     public Vehicle(Road road, int id, double range, double speed) {
         this.occurrences = new AtomicInteger();
+        this.shouldTransfer = new AtomicInteger();
+        this.transferred = new AtomicInteger();
         this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
@@ -91,25 +93,29 @@ public class Vehicle extends Device {
         if (tasks.isEmpty()) {
             return;
         }
-        tasks.forEach(task1 ->
-                              task1.prepareEvent()
-                                   .ifPresent(event -> {
-                                       Optional<ConnectionRoute> route = dynamicNetwork.getRoute(this,
-                                                                                                 event.getTarget());
-                                       event.setRoutingPath(String.valueOf(id));
-                                       route.ifPresent(r -> r.send(event));
-                                   }));
+
+        tasks.stream()
+             .map(task -> task.prepareEventFor(this))
+             .filter(Optional::isPresent)
+             .map(Optional::get)
+             .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget())
+                                             .ifPresent(r -> r.send(Optional.of(event))));
     }
 
+
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
-        return event;
+        incrementTransferred();
+        return Optional.of(event);
     }
 
     @Override
     public void receive(Event event) {
-        System.out.println("Message Received: " + event.toString());
+        if (event.ifIdentityCheck()) {
+            System.out.println("Vehicle Received a Message: " + event.toString());
+            event.getSource().receive(new Event(event.getId(), this, event.getSource(), new Date(), this.privateId.toString(), "" + id));
+        }
     }
 
     @Override
@@ -118,13 +124,31 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void registerTask( Task task ) {
+    public void registerTask(Task task) {
         this.tasks.add(task);
     }
 
     @Override
     public String toString() {
-        return "ID:\t" + id;
+        return "Vehicle{" +
+                "id=" + id +
+                ", road=" + road +
+                ", speed=" + speed +
+                ", direction=" + direction +
+                ", date=" + date +
+                ", previousCrossing=" + previousCrossing +
+                ", task=" + tasks.toString() +
+                ", id=" + id +
+                ", currentLocation=" + currentLocation +
+                ", range=" + range +
+                ", privateId=" + privateId +
+                ", fakeDevices=" + fakeDevices +
+                '}';
+    }
+
+    @Override
+    public void receiveFakeDevices(Set<Integer> fakeDevices) {
+        this.fakeDevices.addAll(fakeDevices);
     }
 }
     

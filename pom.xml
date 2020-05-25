@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.pracownia.vamet</groupId>
+    <groupId>com.pracownia.vanet</groupId>
     <artifactId>vanet</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
@@ -34,7 +34,11 @@
             <artifactId>guava</artifactId>
             <version>29.0-jre</version>
         </dependency>
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> master
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
