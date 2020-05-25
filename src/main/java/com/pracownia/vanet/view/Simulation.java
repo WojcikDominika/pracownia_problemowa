@@ -13,6 +13,8 @@ import com.pracownia.vanet.model.network.NetworkBuilder;
 import com.pracownia.vanet.model.network.connectors.CompositeConnector;
 import com.pracownia.vanet.model.network.connectors.DistanceBasedConnector;
 import com.pracownia.vanet.model.network.connectors.TunnelConnector;
+import com.pracownia.vanet.model.protection.SAMAnalysis;
+import com.pracownia.vanet.model.protection.SDBGHAlgorithm;
 import com.pracownia.vanet.model.road.CrossRoad;
 import com.pracownia.vanet.model.road.Road;
 import com.pracownia.vanet.view.model.DeviceRepresentation;
@@ -44,7 +46,6 @@ import java.util.stream.Collectors;
 public class Simulation implements Runnable {
 
     private static final int START_POINTS_NUMBER = 5;
-
     /*------------------------ FIELDS REGION ------------------------*/
     private Boolean simulationRunning;
     private Thread tr;
@@ -55,11 +56,12 @@ public class Simulation implements Runnable {
     private List<CrossRoad> crossRoads = new ArrayList<>();
     private ShapeFactory shapeFactory = new ShapeFactory();
     private Collection<Device> devices = Collections.synchronizedCollection(new ArrayList<>());
-    private ObservableList<Connection> tunneledDevices = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private ObservableList<Connection> tunneledDevices =
+            FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
     private Set<Integer> fakeDevicesIds = new HashSet<>();
 
     /*------------------------ METHODS REGION ------------------------*/
-    public Simulation(Group scene) {
+    public Simulation( Group scene ) {
         tr = new Thread(this);
         this.simulationRunning = false;
         buildRoads();
@@ -139,17 +141,37 @@ public class Simulation implements Runnable {
         tunneledDevices.addListener((ListChangeListener<? super Connection>) change -> {
             while (change.next()) {
                 change.getAddedSubList()
-                        .forEach(deviceDevicePair -> {
-                            tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
-                            tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
-                        });
+                      .forEach(deviceDevicePair -> {
+                          tunnels.put(deviceDevicePair.getFirstDevice(), deviceDevicePair.getSecondDevice());
+                          tunnels.put(deviceDevicePair.getSecondDevice(), deviceDevicePair.getFirstDevice());
+                      });
             }
         });
 
         return tunnels::get;
     }
 
-    private void drawDevices(Collection<Device> devices) {
+    public void showHackers() {
+        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
+                                                        .setColor(Color.BLACK));
+        SAMAnalysis samAnalysis = new SAMAnalysis(devices);
+        List<Device> vehiclesBiggerThan = samAnalysis.runAnalysis();
+
+        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
+                                                              .setColor(Color.HOTPINK));
+    }
+
+    public void showGreyHoles() {
+        this.devices.forEach(device -> mapRepresentation.getRepresentation(device)
+                .setColor(Color.BLACK));
+        SDBGHAlgorithm sdbghAlgorithm = new SDBGHAlgorithm(devices);
+        List<Device> vehiclesBiggerThan = sdbghAlgorithm.runAnalysis();
+
+        vehiclesBiggerThan.forEach(device -> mapRepresentation.getRepresentation(device)
+                .setColor(Color.RED));
+    }
+
+    private void drawDevices( Collection<Device> devices ) {
         for (Device device : devices) {
             DeviceRepresentation representation = mapRepresentation.getRepresentation(device);
             for (Integer id : this.fakeDevicesIds) {
@@ -198,7 +220,7 @@ public class Simulation implements Runnable {
     }
 
 
-    private void simulateCommunication(Network dynamicNetwork) {
+    private void simulateCommunication( Network dynamicNetwork ) {
         synchronized (devices) {
             for (Device device : devices) {
                 device.send(dynamicNetwork);
@@ -218,7 +240,7 @@ public class Simulation implements Runnable {
         mapRepresentation.switchRangeCircles(MapScheme.Range.ON);
     }
 
-    public void changeVehiclesRanges(double range) {
+    public void changeVehiclesRanges( double range ) {
         synchronized (devices) {
             for (Device device : devices) {
                 if (device instanceof Vehicle) {
@@ -278,6 +300,17 @@ public class Simulation implements Runnable {
             tunneledDevices.add(Connection.between(v1, v2));
         }
         return Lists.newArrayList(v1, v2);
+    }
+
+    public List<Vehicle> addGreyholeVehicle() {
+        Vehicle v1 = new GreyVehicle(roads.get(0 % START_POINTS_NUMBER),
+                carCounter.getAndIncrement(),
+                getCarRange(),
+                randomizeSpeed());
+        synchronized (devices) {
+            devices.add(v1);
+        }
+        return Lists.newArrayList(v1);
     }
 
     public Vehicle addBlackholeVehicle() {

@@ -7,6 +7,7 @@ import com.pracownia.vanet.model.devices.SIN;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class Network {
     Map<Device, NetworkNode> networkNodeByDevice;
 

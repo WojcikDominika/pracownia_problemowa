@@ -11,7 +11,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
@@ -31,11 +36,15 @@ public class Vehicle extends Device {
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
         this.tasks = new ArrayList<>();
+        this.occurrences = new AtomicInteger();
         road = new Road();
         currentLocation = new Point();
     }
 
     public Vehicle(Road road, int id, double range, double speed) {
+        this.occurrences = new AtomicInteger();
+        this.shouldTransfer = new AtomicInteger();
+        this.transferred = new AtomicInteger();
         this.tasks = new ArrayList<>();
         this.road = road;
         this.id = id;
@@ -90,17 +99,15 @@ public class Vehicle extends Device {
              .filter(Optional::isPresent)
              .map(Optional::get)
              .forEach(event -> dynamicNetwork.getRoute(this, event.getTarget())
-                                             .ifPresent(r -> r.send(event)));
+                                             .ifPresent(r -> r.send(Optional.of(event))));
     }
 
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
-        if (event.getRoutingPath().split("->").length > 1) {
-            //this.tasks.forEach(task -> task.done = true);
-        }
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + id);
-        return event;
+        incrementTransferred();
+        return Optional.of(event);
     }
 
     @Override

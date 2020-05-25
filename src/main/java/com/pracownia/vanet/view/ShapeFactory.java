@@ -24,6 +24,9 @@ public class ShapeFactory {
                                                                              deviceRange(device));
         if (device instanceof BlackholeVehicle) {
             deviceRepresentation.setColor(Color.GREEN);
+        }
+        else if (device instanceof GreyVehicle) {
+            deviceRepresentation.setColor(Color.GREY);
         } else if (device instanceof Vehicle) {
             deviceRepresentation.setColor(Color.BLACK);
         } else if (device instanceof RoadSide) {

@@ -4,6 +4,7 @@ import com.pracownia.vanet.model.devices.Device;
 import com.pracownia.vanet.model.event.Event;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ConnectionRoute {
 
@@ -22,19 +23,26 @@ public class ConnectionRoute {
         this.destination = to;
     }
 
-    public void send(Event event) {
-        if (event.ifIdentityCheck() == true) {
-            event.getTarget().receive(event);
+    // To RoadSide
+    public void send(Optional<Event> event) {
+        if (event.get().ifIdentityCheck() && event.isPresent()) {
+            event.get().getTarget().receive(event.get());
             return;
         }
-
+        route.get(0).incrementOccurrences();
         for (int i = 1; i < route.size(); i++) {
-            // Simulates sending for malicious event manipulation
-            event = route.get(i).transfer(event, route.get(i - 1));
-            if (event.getId() == -1) {
-                return;
+            Device device = route.get(i);
+            device.incrementOccurrences();
+            // Simulates sending for malicious event manipulation1
+            if (event.isPresent()) {
+                device.incrementShouldTransfer();
+                event = device
+                        .transfer(event.get(), route.get(i - 1));
             }
+            System.out.println("Id: " + device.getId() + "  ShouldTransfer: " + device.getShouldTransfer());
         }
-        destination.receive(event);
+        if (event.isPresent()) {
+            destination.receive(event.get());
+        }
     }
 }

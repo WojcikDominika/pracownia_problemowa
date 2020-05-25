@@ -29,6 +29,16 @@ public class Task {
         return this.done;
     }
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "target=" + target.getId() +
+                ", message='" + message + '\'' +
+                ", routingPath='" + routingPath + '\'' +
+                ", done=" + done +
+                '}';
+    }
+
     public Optional<Event> prepareEventFor(Device sender){
         Instant now = Instant.now();
         if(Duration.between(lastGenerated, now).getSeconds() > sendEverySeconds){

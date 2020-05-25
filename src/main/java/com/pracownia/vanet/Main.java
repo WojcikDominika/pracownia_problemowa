@@ -105,26 +105,47 @@ public class Main extends Application {
         });
 
         Button addWormholeVehicle = new Button("Add wormhole attack");
-        addWormholeVehicle.setLayoutX(1200.0);
+        addWormholeVehicle.setLayoutX(1130.0);
         addWormholeVehicle.setLayoutY(200.00);
         addWormholeVehicle.setOnAction(e -> {
             simulation.addWormholeVehicles();
         });
 
+        Button findHackers = new Button("Find Hackers");
+        findHackers.setLayoutX(1130.0);
+        findHackers.setLayoutY(4500.00);
+        findHackers.setOnAction(e -> {
+            simulation.showHackers();
+        });
+
+        Button findGreyHoles = new Button("Find grey holes");
+        findGreyHoles.setLayoutX(1130.0);
+        findGreyHoles.setLayoutY(350.00);
+        findGreyHoles.setOnAction(e -> {
+            simulation.showGreyHoles();
+        });
+
+        Button addGreyholeVehicle = new Button("Add greyhole attack");
+        addGreyholeVehicle.setLayoutX(1130.0);
+        addGreyholeVehicle.setLayoutY(250.00);
+        addGreyholeVehicle.setOnAction(e -> {
+            simulation.addGreyholeVehicle();
+
+        });
+
         Button addBlackholeVehicle = new Button("Add blackhole attack");
-        addBlackholeVehicle.setLayoutX(1200.0);
-        addBlackholeVehicle.setLayoutY(250.0);
+        addBlackholeVehicle.setLayoutX(1130.0);
+        addBlackholeVehicle.setLayoutY(300.0);
         addBlackholeVehicle.setOnAction(e -> {
             simulation.addBlackholeVehicle();
         });
 
         Button addSIN = new Button("Add SIN DEFENDER");
-        addSIN.setLayoutX(1200.0);
-        addSIN.setLayoutY(300.0);
+        addSIN.setLayoutX(1130.0);
+        addSIN.setLayoutY(400.0);
         addSIN.setOnAction(e -> {
             simulation.addSIN();
         });
-
         // Vehicle informations.
         this.speedField = new TextField();
         speedField.setLayoutX(950.0);
@@ -206,6 +227,8 @@ public class Main extends Application {
                     spawnVehiclesButton,
                     vehiclesAmountField,
                     stopSimulation,
+                    findHackers,
+                    findGreyHoles,
                     speedField,
                     speedLabel,
                     vehIdField,
@@ -218,12 +241,14 @@ public class Main extends Application {
                     connVehLabel,
                     startSimulation,
                     addWormholeVehicle,
+                    addGreyholeVehicle,
                     addBlackholeVehicle,
                     vehiclesAmountLabel,
                     rangeAmountLabel,
                     rangeAmountField,
                     addSIN,
                     changeRangeButton);
+
 
     }
 }

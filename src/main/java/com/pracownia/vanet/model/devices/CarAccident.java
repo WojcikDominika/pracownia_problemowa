@@ -33,9 +33,9 @@ public class CarAccident extends Device {
     }
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         event.setRoutingPath(event.getRoutingPath() + "->" + "car_accident " + id);
-        return event;
+        return Optional.of(event);
     }
 
     @Override

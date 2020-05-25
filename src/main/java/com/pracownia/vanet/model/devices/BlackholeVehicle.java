@@ -6,6 +6,7 @@ import com.pracownia.vanet.model.road.Road;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class BlackholeVehicle extends Vehicle {
 
@@ -19,12 +20,12 @@ public class BlackholeVehicle extends Vehicle {
     }
 
     @Override
-    public Event transfer(Event event, Device receivedFrom) {
+    public Optional<Event> transfer(Event event, Device receivedFrom) {
         if (receivedFrom == this ? !event.getRoutingPath().contains("->") : false) {
             getTasks().forEach(task -> task.done = true);
         }
         System.out.println("Message ID " + event.getId() + " blocked by Blackhole ID " + getId());
         event.setId(-1);
-        return event;
+        return Optional.of(event);
     }
 }
