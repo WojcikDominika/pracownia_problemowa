@@ -32,7 +32,6 @@ public class Vehicle extends Device {
     @Setter(AccessLevel.NONE)
     private Point previousCrossing;
 
-
     /*------------------------ METHODS REGION ------------------------*/
     public Vehicle() {
         this.tasks = new ArrayList<>();
@@ -90,10 +89,11 @@ public class Vehicle extends Device {
     }
 
     @Override
-    public void send(Network dynamicNetwork) {
+    public void send( Network dynamicNetwork ) {
         if (tasks.isEmpty()) {
             return;
         }
+
         tasks.stream()
              .map(task -> task.prepareEventFor(this))
              .filter(Optional::isPresent)

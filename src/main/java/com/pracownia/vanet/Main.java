@@ -112,8 +112,8 @@ public class Main extends Application {
         });
 
         Button findHackers = new Button("Find Hackers");
-        findHackers.setLayoutX(1130.0);
-        findHackers.setLayoutY(4500.00);
+        findHackers.setLayoutX(1150.0);
+        findHackers.setLayoutY(450.00);
         findHackers.setOnAction(e -> {
             simulation.showHackers();
         });
@@ -227,9 +227,9 @@ public class Main extends Application {
                     spawnVehiclesButton,
                     vehiclesAmountField,
                     stopSimulation,
-                    findHackers,
                     findGreyHoles,
                     speedField,
+                    findHackers,
                     speedLabel,
                     vehIdField,
                     vehIdLabel,
@@ -248,8 +248,6 @@ public class Main extends Application {
                     rangeAmountField,
                     addSIN,
                     changeRangeButton);
-
-
     }
 }
     

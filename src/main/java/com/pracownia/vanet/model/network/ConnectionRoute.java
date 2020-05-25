@@ -34,6 +34,7 @@ public class ConnectionRoute {
             Device device = route.get(i);
             device.incrementOccurrences();
             // Simulates sending for malicious event manipulation1
+
             if (event.isPresent()) {
                 device.incrementShouldTransfer();
                 event = device

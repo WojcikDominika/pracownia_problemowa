@@ -9,9 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.*;
+import java.util.Optional;
+
 
 @Getter
 @Setter
@@ -23,6 +26,7 @@ public abstract class Device {
     protected Point currentLocation = new Point();
     protected double range;
     protected AtomicInteger occurrences;
+
     protected AtomicInteger shouldTransfer;
     protected AtomicInteger transferred;
     protected UUID privateId = UUID.randomUUID();
